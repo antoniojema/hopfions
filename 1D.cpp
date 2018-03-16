@@ -11,7 +11,7 @@ const int N=2000;
 double Ex[N+1], Hy[N+1];
 
 int main(){
-	int i, j, K;
+	int i, j;
 	double Ex1[2], Ex2[2], Hy1[2], Hy2[2];
 	double sigma[2], sigmam[2], Dz, Dt, epsilon[2], mu[2], c[2], L, x;
 	double front=6;
