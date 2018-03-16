@@ -8,10 +8,6 @@ const int N=2000;
 double A, B, Ze, Zm;
 double Ex[N+1], Hy[N+1];
 
-double f(double x){
-	return exp(-1.*x*x);
-}
-
 int main(){
 	int i, j;
 	double Ex1[2], Ex2[2], Hy1[2], Hy2[2];
@@ -46,8 +42,6 @@ int main(){
 			Ex[j] = A*Ex[j] + Ze*(Hy[j]-Hy[j+1]) - 0.01*exp(-0.001*(j-1000)*(j-1000))*sin(0.01*i);
 			//if(j==1000) Ex[j] -= sin(0.01*i);
 		}
-		//CONDICION PERIODICA:
-		//Ex[N] = A*Ex[N]+Ze*(Hy[N]-Hy[0]);
 		
 		//CONDICION MUR:
 		Ex[N] = -1.*Ex2[1] + ((c*Dt-Dz)/(c*Dt+Dz))*(Ex[N-1]+Ex2[0]) + (2.*Dz/(c*Dt+Dz))*(Ex1[0]+Ex1[1]);
@@ -62,8 +56,6 @@ int main(){
 		for(j=1; j<=N; j++){
 			Hy[j] = B*Hy[j] + Zm*(Ex[j-1]-Ex[j]);
 		}
-		//CONDICION PERIODICA:
-		//Hy[0] = B*Hy[0]+Zm*(Ex[N]-Ex[0]);
 		
 		//CONDICION MUR:
 		Hy[0] = -1.*Hy2[1] + ((c*Dt-Dz)/(c*Dt+Dz))*(Hy[1]+Hy2[0]) + (2.*Dz/(c*Dt+Dz))*(Hy1[0]+Hy1[1]);
