@@ -176,11 +176,11 @@ int main(){
 			}
 		}
 		
-		//Ploteo los datos en el h5
+		//Ploteo los datos
 		for(i=0; i<=N; i++){
 			for(j=0; j<=N; j++){
 				for(k=0; k<=N; k++){
-					//Es demasiado pesado, hay que hacerlo en h5 por cojones
+					//h5
 				}
 			}
 		}
