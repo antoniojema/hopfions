@@ -1,4 +1,5 @@
-#Este codigo simula y muestra la animacion de un pulso gaussiano propagandose en 1D
+#Este codigo genera un .h5 con un puslo gaussiano propagandose en 1D
+#El archivo que abre el .h5 y plotea la animacion es "anim.py"
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as ani
@@ -9,6 +10,7 @@ def f(x):
 
 #Grid data
 N = 2000
+iterations = 10001
 L = 10
 Dt = Dz = 1.*L/N
 sigma = 0
@@ -31,20 +33,15 @@ Ze=(Dt/(epsilon*Dz))/(1.+sigma*Dt/(2.*epsilon))
 B=(1.-sigmam*Dt/(2.*mu))/(1.+sigmam*Dt/(2.*mu))
 Zm=(Dt/(mu*Dz))/(1.+sigmam*Dt/(2.*mu))
 
-### Simulation and animation ###
+### Simulation ###
 
-fig,ax = plt.subplots()
-line, = ax.plot(x,Ex)
+#Inicializate h5 file
+fout = h5.File('1D.h5','w')
+fout.attrs['N'] = N
+fout.attrs['iterations'] = iterations
 
-def iteration(i):
-	global N
-	global Ex
-	global Hy
-	global Ex1
-	global Ex2
-	global Hy1
-	global Hy2
-	
+#Simulation loop
+for n in range(iterations):
 	#Calculate Ex
 	aux = np.insert(np.delete(Hy,0),N,0)
 	Ex = A*Ex + Ze*(Hy-aux)
@@ -63,9 +60,9 @@ def iteration(i):
 	#MUR ABC
 	Hy[0] = -1.*Hy2[1] + ((c*Dt-Dz)/(c*Dt+Dz))*(Hy[1]+Hy2[0]) + (2.*Dz/(c*Dt+Dz))*(Hy1[0]+Hy1[1])
 	
-	#Data -> plot
-	line.set_ydata(Ex)
-	return line,
+	#Data -> h5
+	fout.create_group(str(n))
+	fout[str(n)]["Ex"] = Ex
+	fout[str(n)]["Hy"] = Hy
 
-animation = ani.FuncAnimation(fig, iteration, 10000, interval=25)
-plt.show()
+fout.close()
