@@ -17,8 +17,8 @@ double Ex2[(N+1)*(N+1)*(N+1)], Ey2[(N+1)*(N+1)*(N+1)], Ez2[(N+1)*(N+1)*(N+1)];
 double Hx2[(N+1)*(N+1)*(N+1)], Hy2[(N+1)*(N+1)*(N+1)], Hz2[(N+1)*(N+1)*(N+1)];
 */
 
-int ind(int i, int j, int k){
-	return (N+1)*(N+1)*i+(N+1)*j+k;
+inline int ind(int i, int j, int k) {
+    return (N+1)*(N+1)*i+(N+1)*j+k;
 }
 /*
 double fe(double a, double x, double y, double z){
@@ -35,10 +35,11 @@ int main(){
 	ofstream fout;
 	
 	L=10;
-	sigma = sigmam = 0;
-	Dx = Dy = Dz = Dt = L/N;
-	epsilon = mu = 1;
 	c=1;
+	sigma = sigmam = 0;
+	Dx = Dy = Dz = L/N;
+	Dt = Dx / c / sqrt(3.0);
+	epsilon = mu = 1;
 	
 	A = (1.-sigma*Dt/(2.*epsilon))/(1.+sigma*Dt/(2.*epsilon));
 	Xe = (Dt/(epsilon*Dx))/(1.+sigma*Dt/(2.*epsilon));
