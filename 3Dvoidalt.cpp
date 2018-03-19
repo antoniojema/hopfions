@@ -1,16 +1,17 @@
 #include <iostream>
 #include <cmath>
 #include <fstream>
-//#include <H5Cpp.h>
+
+#include "hdf5.h"
 
 using namespace std;
-//using namespace H5;
 
 double A, Xe, Ye, Ze;
 double B, Xm, Ym, Zm;
 const int N=100, iterations=100;
 double Ex[(N+1)*(N+1)*(N+1)],  Ey[(N+1)*(N+1)*(N+1)],  Ez[(N+1)*(N+1)*(N+1)];
 double Hx[(N+1)*(N+1)*(N+1)],  Hy[(N+1)*(N+1)*(N+1)],  Hz[(N+1)*(N+1)*(N+1)];
+
 /*double Ex1[(N+1)*(N+1)*(N+1)], Ey1[(N+1)*(N+1)*(N+1)], Ez1[(N+1)*(N+1)*(N+1)];
 double Hx1[(N+1)*(N+1)*(N+1)], Hy1[(N+1)*(N+1)*(N+1)], Hz1[(N+1)*(N+1)*(N+1)];
 double Ex2[(N+1)*(N+1)*(N+1)], Ey2[(N+1)*(N+1)*(N+1)], Ez2[(N+1)*(N+1)*(N+1)];
@@ -30,6 +31,12 @@ double fm(double b, double x, double y, double z){
 */
 
 int main(){
+    hid_t       file_id, dataset_id, dataspace_id;  /* identifiers */
+    hsize_t     dims[2];
+    herr_t      status;
+    dataset_id = H5Dcreate2(file_id, "/dset", H5T_STD_I32BE, dataspace_id,
+                           H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+
 	int n, i, j, k;
 	double sigma, sigmam, Dx, Dy, Dz, Dt, epsilon, mu, c, L, x;
 	ofstream fout;
@@ -38,7 +45,7 @@ int main(){
 	c=1;
 	sigma = sigmam = 0;
 	Dx = Dy = Dz = L/N;
-	Dt = Dx / c / sqrt(3.0);
+	Dt = Dx / c / sqrt(3.0) * 0.8;
 	epsilon = mu = 1;
 	
 	A = (1.-sigma*Dt/(2.*epsilon))/(1.+sigma*Dt/(2.*epsilon));
