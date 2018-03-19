@@ -149,7 +149,6 @@ int main(){
 		*/
 		
 		//Data -> txt
-		
 		for(i=0; i<=N; i++){
 			fout << i << "	" << abs(Ex[ind(N/2,N/2,i)]) << endl;
 			for(j=0; j<=N; j++){
@@ -158,15 +157,6 @@ int main(){
 			}
 			fout2 << endl;
 		}
-		/*
-		for(i=0; i<=N; i++){
-			fout << i << "	" << abs(Ex[ind(N/2,N/2,i)]) << endl;
-			for(j=0; j<=N; j++){
-				//This is to make a colormap of a cross section of the entire scene in order to see the radiation scheme
-				fout2 << i << "	" << j << "	" << abs(Ex[ind(i,N/2,j)]) << endl;
-			}
-		}
-		*/
 	
 	}
 	fout.close();
