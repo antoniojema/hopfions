@@ -56,8 +56,12 @@ int main(){
 	for(i=0; i<=N; i++){
 		for(j=0; j<=N; j++){
 			for(k=0; k<=N; k++){
-				Ex[ind(i,j,k)]=0 = Ey[ind(i,j,k)]=0 = Ez[ind(i,j,k)]=0;
-				Hx[ind(i,j,k)]=0 = Hy[ind(i,j,k)]=0 = Hz[ind(i,j,k)]=0;
+				Ex[ind(i,j,k)] = 0;
+				Ey[ind(i,j,k)] = 0;
+				Ez[ind(i,j,k)] = 0;
+				Hx[ind(i,j,k)] = 0;
+				Hy[ind(i,j,k)] = 0;
+				Hz[ind(i,j,k)] = 0;
 			}
 		}
 	}
