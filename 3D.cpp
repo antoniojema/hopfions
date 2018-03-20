@@ -1,52 +1,37 @@
 #include <iostream>
 #include <cmath>
 #include <fstream>
-
-#include "hdf5.h"
+//#include <H5Cpp.h>
 
 using namespace std;
+//using namespace H5;
 
 double A, Xe, Ye, Ze;
 double B, Xm, Ym, Zm;
 const int N=100, iterations=100;
 double Ex[(N+1)*(N+1)*(N+1)],  Ey[(N+1)*(N+1)*(N+1)],  Ez[(N+1)*(N+1)*(N+1)];
 double Hx[(N+1)*(N+1)*(N+1)],  Hy[(N+1)*(N+1)*(N+1)],  Hz[(N+1)*(N+1)*(N+1)];
-
 /*double Ex1[(N+1)*(N+1)*(N+1)], Ey1[(N+1)*(N+1)*(N+1)], Ez1[(N+1)*(N+1)*(N+1)];
 double Hx1[(N+1)*(N+1)*(N+1)], Hy1[(N+1)*(N+1)*(N+1)], Hz1[(N+1)*(N+1)*(N+1)];
 double Ex2[(N+1)*(N+1)*(N+1)], Ey2[(N+1)*(N+1)*(N+1)], Ez2[(N+1)*(N+1)*(N+1)];
 double Hx2[(N+1)*(N+1)*(N+1)], Hy2[(N+1)*(N+1)*(N+1)], Hz2[(N+1)*(N+1)*(N+1)];
 */
 
-inline int ind(int i, int j, int k) {
-    return (N+1)*(N+1)*i+(N+1)*j+k;
+int ind(int i, int j, int k){
+	return (N+1)*(N+1)*i+(N+1)*j+k;
 }
-/*
-double fe(double a, double x, double y, double z){
-	return A*a + Xe*x + Ye*y + Ze*z;
-}
-double fm(double b, double x, double y, double z){
-	return B*b + Xm*x + Ym*y + Zm*z;
-}
-*/
 
 int main(){
-    hid_t       file_id, dataset_id, dataspace_id;  /* identifiers */
-    hsize_t     dims[2];
-    herr_t      status;
-    dataset_id = H5Dcreate2(file_id, "/dset", H5T_STD_I32BE, dataspace_id,
-                           H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-
 	int n, i, j, k;
 	double sigma, sigmam, Dx, Dy, Dz, Dt, epsilon, mu, c, L, x;
-	ofstream fout;
+	ofstream fout, fout2;
 	
 	L=10;
-	c=1;
 	sigma = sigmam = 0;
-	Dx = Dy = Dz = L/N;
-	Dt = Dx / c / sqrt(3.0) * 0.8;
 	epsilon = mu = 1;
+	c=1;
+	Dx = Dy = Dz = L/N;
+	Dt = 0.8*Dx/(c*sqrt(3.0));
 	
 	A = (1.-sigma*Dt/(2.*epsilon))/(1.+sigma*Dt/(2.*epsilon));
 	Xe = (Dt/(epsilon*Dx))/(1.+sigma*Dt/(2.*epsilon));
@@ -57,10 +42,11 @@ int main(){
 	Ym = (Dt/(mu*Dy))/(1.+sigmam*Dt/(2.*mu));
 	Zm = (Dt/(mu*Dz))/(1.+sigmam*Dt/(2.*mu));
 	
-	//Open output data
-	fout.open("3Dcpp.txt");
+	//Open output file
+	fout.open("3D.txt");
+	fout2.open("3Dcm.txt");
 	
-	//Condiciones iniciales
+	//Initial conditions
 	for(i=0; i<=N; i++){
 		for(j=0; j<=N; j++){
 			for(k=0; k<=N; k++){
@@ -85,7 +71,7 @@ int main(){
 	*/
 	
 	for(n=0; n<=iterations; n++){
-		//Calculo los nuevos E [FALTAN TODAS LAS CONDICIONES DE CONTORNO]
+		//Calculate E [LACKS ALL BOUNDING CONDITIONS]
 		//Ex
 		for(i=0; i<=N-1; i++){
 			for(j=0; j<=N-1; j++){
@@ -95,7 +81,7 @@ int main(){
 					Ez[ind(i,j,k)] = A*Ez[ind(i,j,k)] + Ye*(Hx[ind(i,j,k)]-Hx[ind(i,j+1,k)]) + Xe*(Hy[ind(i+1,j,k)]-Hy[ind(i,j,k)]);
 					//Corriente
 					if (i>=4*N/10 && i<6*N/10 && j>=4*N/10 && j<6*N/10 && k>=4*N/10 && k<6*N/10 && n<=31){
-						Ex[ind(i,j,k)] -= exp(-0.5*((i-N/2)*(i-N/2)+(j-N/2)*(j-N/2)+(k-N/2)*(k-N/2)))*sin(0.1*n);
+						Ex[ind(i,j,k)] -= exp(-0.5*((i-N/2)*(i-N/2)+(j-N/2)*(j-N/2)+(k-N/2)*(k-N/2)))*sin(0.2*n);
 					}
 				}
 				Ez[ind(i,j,N)] = A*Ez[ind(i,j,N)] + Ye*(Hx[ind(i,j,N)]-Hx[ind(i,j+1,N)]) + Xe*(Hy[ind(i+1,j,N)]-Hy[ind(i,j,N)]);
@@ -126,7 +112,7 @@ int main(){
 		}
 		*/
 		
-		//Hago lo propio con H [FALTAN TODAS LAS CONDICIONES DE CONTORNO]
+		//Calculate H [LACKS ALL BOUNDING CONDITIONS]
 		for(i=1; i<=N; i++){
 			for(j=1; j<=N; j++){
 				for(k=1; k<=N; k++){
@@ -164,10 +150,17 @@ int main(){
 		
 		//Data -> txt
 		for(i=0; i<=N; i++){
-			fout << i << "	" << Ex[ind(N/2,N/2,i)] << endl;
+			fout << i << "	" << abs(Ex[ind(N/2,N/2,i)]) << endl;
+			for(j=0; j<=N; j++){
+				//This is to make a colormap of a cross section of the entire scene in order to see the radiation scheme
+				fout2 << abs(Ex[ind(i,N/2,j)]) << "	";
+			}
+			fout2 << endl;
 		}
+	
 	}
 	fout.close();
+	fout2.close();
 	
 	return 0;
 }
