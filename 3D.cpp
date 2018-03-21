@@ -1,10 +1,10 @@
 #include <iostream>
 #include <cmath>
 #include <fstream>
-//#include <H5Cpp.h>
+#include <H5Cpp.h>
 
 using namespace std;
-//using namespace H5;
+using namespace H5;
 
 double A, Xe, Ye, Ze;
 double B, Xm, Ym, Zm;
@@ -17,7 +17,6 @@ double Hx1[(N+1)*(N+1)*(N+1)], Hy1[(N+1)*(N+1)*(N+1)], Hz1[(N+1)*(N+1)*(N+1)];
 double Ex2[(N+1)*(N+1)*(N+1)], Ey2[(N+1)*(N+1)*(N+1)], Ez2[(N+1)*(N+1)*(N+1)];
 double Hx2[(N+1)*(N+1)*(N+1)], Hy2[(N+1)*(N+1)*(N+1)], Hz2[(N+1)*(N+1)*(N+1)];
 
-
 int ind(int i, int j, int k){
 	return (N+1)*(N+1)*i+(N+1)*j+k;
 }
@@ -25,7 +24,6 @@ int ind(int i, int j, int k){
 int main(){
 	int n, i, j, k;
 	double sigma, sigmam, Dx, Dy, Dz, Dt, epsilon, mu, c, L, x;
-	ofstream fout, fout2;
 	
 	L=10;
 	sigma = sigmam = 0;
@@ -34,6 +32,7 @@ int main(){
 	Dx = Dy = Dz = L/N;
 	Dt = 0.8*Dx/(c*sqrt(3.0));
 	
+	//Constants for the FDTD method
 	A = (1.-sigma*Dt/(2.*epsilon))/(1.+sigma*Dt/(2.*epsilon));
 	Xe = (Dt/(epsilon*Dx))/(1.+sigma*Dt/(2.*epsilon));
 	Ye = (Dt/(epsilon*Dy))/(1.+sigma*Dt/(2.*epsilon));
@@ -43,15 +42,12 @@ int main(){
 	Ym = (Dt/(mu*Dy))/(1.+sigmam*Dt/(2.*mu));
 	Zm = (Dt/(mu*Dz))/(1.+sigmam*Dt/(2.*mu));
 	
+	//Constants for the MUR boundary conditions
 	C1 = (c*Dt-Dx)/(c*Dt+Dx);
 	C2 = 2*Dx/(c*Dt+Dx);
 	C3 = c*c*Dt*Dt/(2*Dx*(c*Dt+Dx));
 	
-	//Open output file
-	fout.open("3D.txt");
-	fout2.open("3Dcm.txt");
-	
-	//Initial conditions
+	/* Initial conditions */
 	for(i=0; i<=N; i++){
 		for(j=0; j<=N; j++){
 			for(k=0; k<=N; k++){
@@ -84,6 +80,20 @@ int main(){
 		}
 	}
 	
+	try
+	{
+	Exception::dontPrint();
+	
+	/* Prepare output file */
+	H5File fout("3D.h5", H5F_ACC_TRUNC);
+	hsize_t dimsf[3];
+	dimsf[0] = N+1;
+	dimsf[1] = N+1;
+	dimsf[2] = N+1;
+	DataSpace dspace(3, dimsf);
+	Group grp;
+	DataSet dset;
+	
 	for(n=0; n<=iterations; n++){
 		/***** E *****/ //LACKS EDGES CONDITIONS
 		for(i=0; i<=N-1; i++){
@@ -96,7 +106,7 @@ int main(){
 					Ez[ind(i,j,k)] = A * Ez[ind(i,j,k)] + Ye * (Hx[ind(i,j,k)] - Hx[ind(i,j+1,k)]) +
 									 Xe * (Hy[ind(i+1,j,k)] - Hy[ind(i,j,k)]);
 					/** Current **/
-					if (i>=4*N/10 && i<6*N/10 && j>=4*N/10 && j<6*N/10 && k>=4*N/10 && k<6*N/10 && n<=31){
+					if (i>=4*N/10 && i<6*N/10 && j>=4*N/10 && j<6*N/10 && k>=4*N/10 && k<6*N/10 /*&& n<=31*/){
 						Ex[ind(i,j,k)] -= exp(-0.5*((i-N/2)*(i-N/2)+(j-N/2)*(j-N/2)+(k-N/2)*(k-N/2)))*sin(0.2*n);
 					}
 					/***************/
@@ -236,19 +246,33 @@ int main(){
 			}
 		}
 		
-		//Data -> txt
-		for(i=0; i<=N; i++){
-			fout << i << "	" << abs(Ex[ind(N/2,N/2,i)]) << endl;
-			for(j=0; j<=N; j++){
-				//This is to make a colormap of a cross section of the entire scene in order to see the radiation scheme
-				fout2 << abs(Ex[ind(i,N/2,j)]) << "	";
-			}
-			fout2 << endl;
-		}
-	
+		/* Data -> h5 */
+		grp = fout.createGroup("/" + to_string(n));
+		dset = fout.createDataSet("/"+to_string(n)+"/Ex", PredType::NATIVE_DOUBLE, dspace);
+		dset.write(Ex, PredType::NATIVE_DOUBLE);
+		dset = fout.createDataSet("/"+to_string(n)+"/Ey", PredType::NATIVE_DOUBLE, dspace);
+		dset.write(Ey, PredType::NATIVE_DOUBLE);
+		dset = fout.createDataSet("/"+to_string(n)+"/Ez", PredType::NATIVE_DOUBLE, dspace);
+		dset.write(Ez, PredType::NATIVE_DOUBLE);
+		dset = fout.createDataSet("/"+to_string(n)+"/Hx", PredType::NATIVE_DOUBLE, dspace);
+		dset.write(Hx, PredType::NATIVE_DOUBLE);
+		dset = fout.createDataSet("/"+to_string(n)+"/Hy", PredType::NATIVE_DOUBLE, dspace);
+		dset.write(Hy, PredType::NATIVE_DOUBLE);
+		dset = fout.createDataSet("/"+to_string(n)+"/Hz", PredType::NATIVE_DOUBLE, dspace);
+		dset.write(Hz, PredType::NATIVE_DOUBLE);
+		
+		cout << 100.*n/iterations << " %" << endl;
 	}
-	fout.close();
-	fout2.close();
+	}catch(FileIException error){
+	error.printError();
+	return -1;
+	}catch(DataSetIException error){
+	error.printError();
+	return -1;
+	}catch(DataSpaceIException error){
+	error.printError();
+	return -1;
+	}
 	
 	return 0;
 }
