@@ -9,7 +9,7 @@ using namespace H5;
 double A, Xe, Ye, Ze;
 double B, Xm, Ym, Zm;
 double C1, C2, C3;
-const int N=100, iterations=200;
+const int N=100, iterations=100;
 double Ex[(N+1)*(N+1)*(N+1)],  Ey[(N+1)*(N+1)*(N+1)],  Ez[(N+1)*(N+1)*(N+1)];
 double Hx[(N+1)*(N+1)*(N+1)],  Hy[(N+1)*(N+1)*(N+1)],  Hz[(N+1)*(N+1)*(N+1)];
 double Ex1[(N+1)*(N+1)*(N+1)], Ey1[(N+1)*(N+1)*(N+1)], Ez1[(N+1)*(N+1)*(N+1)];
@@ -86,13 +86,19 @@ int main(){
 	
 	/* Prepare output file */
 	H5File fout("3D.h5", H5F_ACC_TRUNC);
-	hsize_t dimsf[3];
-	dimsf[0] = N+1;
-	dimsf[1] = N+1;
-	dimsf[2] = N+1;
-	DataSpace dspace(3, dimsf);
+	hsize_t dimsf[1];
+	dimsf[0] = (N+1)*(N+1)*(N+1);
+	DataSpace dspace(1, dimsf);
 	Group grp;
 	DataSet dset;
+	hsize_t dimsa[1] = { 1 };
+	DataSpace attrds = DataSpace(1, dimsa);
+	Attribute attr = fout.createAttribute("N",PredType::NATIVE_INT, attrds);
+	int attr_N[1] = {N};
+	attr.write(PredType::NATIVE_INT, attr_N);
+	attr = fout.createAttribute("iterations",PredType::NATIVE_INT, attrds);
+	int attr_it[1] = {iterations};
+	attr.write(PredType::NATIVE_INT, attr_it);
 	
 	for(n=0; n<=iterations; n++){
 		/***** E *****/ //LACKS EDGES CONDITIONS
