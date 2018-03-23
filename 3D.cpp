@@ -93,10 +93,12 @@ int main(){
 	DataSet dset;
 	hsize_t dimsa[1] = { 1 };
 	DataSpace attrds = DataSpace(1, dimsa);
-	Attribute attr = fout.createAttribute("N",PredType::NATIVE_INT, attrds);
+	//Attribute attr = fout.createAttribute("N",PredType::NATIVE_INT, attrds); NOTE: Luis: this method does not exists
+	Attribute attr = dset.createAttribute("N",PredType::NATIVE_INT, attrds);
 	int attr_N[1] = {N};
 	attr.write(PredType::NATIVE_INT, attr_N);
-	attr = fout.createAttribute("iterations",PredType::NATIVE_INT, attrds);
+	//	attr = fout.createAttribute("iterations",PredType::NATIVE_INT, attrds); NOTE: Luis: this method does not exists
+	attr = dset.createAttribute("iterations",PredType::NATIVE_INT, attrds);
 	int attr_it[1] = {iterations};
 	attr.write(PredType::NATIVE_INT, attr_it);
 	
