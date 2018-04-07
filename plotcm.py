@@ -34,12 +34,15 @@ def iteration(i):
 	global y
 	global cbar
 	plt.cla()
-	plt.autoscale(False)
+	
+	plt.ylim([0,N])
+	plt.xlim([0,N])
 	E = np.sqrt((fin[str(i)]['Ex'][:])**2+(fin[str(i)]['Ey'][:])**2+(fin[str(i)]['Ez'][:])**2)
 	pylab.pcolor(E[ind(x,N/2,y)])
-	plt.clim(0,1)
+	plt.clim(0,0.1)
 	cbar.remove()
 	cbar = pylab.colorbar()
 
 animation = ani.FuncAnimation(fig, iteration, np.arange(1,iterations/5+1,1)*5, interval=25, init_func=init)
 plt.show()
+

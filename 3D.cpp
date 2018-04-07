@@ -9,7 +9,7 @@ using namespace H5;
 double A, Xe, Ye, Ze;
 double B, Xm, Ym, Zm;
 double C1, C2, C3;
-const int N=100, iterations=100;
+const int N=100, iterations=200;
 double Ex[(N+1)*(N+1)*(N+1)],  Ey[(N+1)*(N+1)*(N+1)],  Ez[(N+1)*(N+1)*(N+1)];
 double Hx[(N+1)*(N+1)*(N+1)],  Hy[(N+1)*(N+1)*(N+1)],  Hz[(N+1)*(N+1)*(N+1)];
 double Ex1[(N+1)*(N+1)*(N+1)], Ey1[(N+1)*(N+1)*(N+1)], Ez1[(N+1)*(N+1)*(N+1)];
@@ -21,6 +21,10 @@ int ind(int i, int j, int k){
 	return (N+1)*(N+1)*i+(N+1)*j+k;
 }
 
+void EdgeCondE();
+void EdgeCondH();
+double Edge(double i, double a, double b, double d, double W[], int p, bool p1, bool p2);
+
 int main(){
 	int n, i, j, k;
 	double sigma, sigmam, Dx, Dy, Dz, Dt, epsilon, mu, c, L, x;
@@ -30,7 +34,7 @@ int main(){
 	epsilon = mu = 1;
 	c=1;
 	Dx = Dy = Dz = L/N;
-	Dt = 0.8*Dx/(c*sqrt(3.0));
+	Dt = Dx/(2*c);
 	
 	//Constants for the FDTD method
 	A = (1.-sigma*Dt/(2.*epsilon))/(1.+sigma*Dt/(2.*epsilon));
@@ -93,17 +97,17 @@ int main(){
 	DataSet dset;
 	hsize_t dimsa[1] = { 1 };
 	DataSpace attrds = DataSpace(1, dimsa);
-	//Attribute attr = fout.createAttribute("N",PredType::NATIVE_INT, attrds); NOTE: Luis: this method does not exists
-	Attribute attr = dset.createAttribute("N",PredType::NATIVE_INT, attrds);
+	Attribute attr = fout.createAttribute("N",PredType::NATIVE_INT, attrds);
+	//Attribute attr = dset.createAttribute("N",PredType::NATIVE_INT, attrds); 
 	int attr_N[1] = {N};
 	attr.write(PredType::NATIVE_INT, attr_N);
-	//	attr = fout.createAttribute("iterations",PredType::NATIVE_INT, attrds); NOTE: Luis: this method does not exists
-	attr = dset.createAttribute("iterations",PredType::NATIVE_INT, attrds);
+	attr = fout.createAttribute("iterations",PredType::NATIVE_INT, attrds);
+	//attr = dset.createAttribute("iterations",PredType::NATIVE_INT, attrds);
 	int attr_it[1] = {iterations};
 	attr.write(PredType::NATIVE_INT, attr_it);
 	
 	for(n=0; n<=iterations; n++){
-		/***** E *****/ //LACKS EDGES CONDITIONS
+		/***** E *****/
 		for(i=0; i<=N-1; i++){
 			for(j=0; j<=N-1; j++){
 				for(k=0; k<=N-1; k++){
@@ -114,7 +118,7 @@ int main(){
 					Ez[ind(i,j,k)] = A * Ez[ind(i,j,k)] + Ye * (Hx[ind(i,j,k)] - Hx[ind(i,j+1,k)]) +
 									 Xe * (Hy[ind(i+1,j,k)] - Hy[ind(i,j,k)]);
 					/** Current **/
-					if (i>=4*N/10 && i<6*N/10 && j>=4*N/10 && j<6*N/10 && k>=4*N/10 && k<6*N/10 /*&& n<=31*/){
+					if (i>=4*N/10 && i<6*N/10 && j>=4*N/10 && j<6*N/10 && k>=4*N/10 && k<6*N/10 && n<=31){
 						Ex[ind(i,j,k)] -= exp(-0.5*((i-N/2)*(i-N/2)+(j-N/2)*(j-N/2)+(k-N/2)*(k-N/2)))*sin(0.2*n);
 					}
 					/***************/
@@ -167,6 +171,9 @@ int main(){
 			}
 		}
 		
+		/* Edges conditions */
+		EdgeCondE();
+		
 		/* E -> E1 -> E2 */
 		for(i=0; i<=N; i++){
 			for(j=0; j<=N; j++){
@@ -181,7 +188,7 @@ int main(){
 			}
 		}
 		
-		/***** H *****/ //LACKS EDGES CONDITIONS
+		/***** H *****/
 		for(i=1; i<=N; i++){
 			for(j=1; j<=N; j++){
 				for(k=1; k<=N; k++){
@@ -240,6 +247,9 @@ int main(){
 			}
 		}
 		
+		/* Edge conditions */
+		EdgeCondH();
+		
 		/* H -> H1 -> H2 */
 		for(i=0; i<=N; i++){
 			for(j=0; j<=N; j++){
@@ -282,5 +292,357 @@ int main(){
 	return -1;
 	}
 	
+	return 0;
+}
+	
+void EdgeCondE(){ //This only works for cubic grid
+	double a = 0.25 * M_PI, b, d, f;
+	for(int i=0; i<=N-1; i++){
+		b = atan(1.*N/(sqrt(2)*abs(0.5*N-i)));
+		d = sqrt(0.5*N*N + (0.5*N-i)*(0.5*N-i));
+		f = sqrt((d-1.)/d);
+		Ex[ind(i,0,0)] = Edge(i, a, b, f, Ex2, 1, 0, 0);
+		Ey[ind(i,0,0)] = Edge(i, a, b, f, Ey2, 1, 0, 0);
+		Ez[ind(i,0,0)] = Edge(i, a, b, f, Ez2, 1, 0, 0);
+		Ex[ind(i,0,N)] = Edge(i, a, b, f, Ex2, 1, 0, N);
+		Ey[ind(i,0,N)] = Edge(i, a, b, f, Ey2, 1, 0, N);
+		Ez[ind(i,0,N)] = Edge(i, a, b, f, Ez2, 1, 0, N);
+		Ex[ind(i,N,0)] = Edge(i, a, b, f, Ex2, 1, N, 0);
+		Ey[ind(i,N,0)] = Edge(i, a, b, f, Ey2, 1, N, 0);
+		Ez[ind(i,N,0)] = Edge(i, a, b, f, Ez2, 1, N, 0);
+		Ex[ind(i,N,N)] = Edge(i, a, b, f, Ex2, 1, N, N);
+		Ey[ind(i,N,N)] = Edge(i, a, b, f, Ey2, 1, N, N);
+		Ez[ind(i,N,N)] = Edge(i, a, b, f, Ez2, 1, N, N);
+		
+		Ex[ind(0,i,0)] = Edge(i, a, b, f, Ex2, 2, 0, 0);
+		Ey[ind(0,i,0)] = Edge(i, a, b, f, Ey2, 2, 0, 0);
+		Ez[ind(0,i,0)] = Edge(i, a, b, f, Ez2, 2, 0, 0);
+		Ex[ind(0,i,N)] = Edge(i, a, b, f, Ex2, 2, 0, N);
+		Ey[ind(0,i,N)] = Edge(i, a, b, f, Ey2, 2, 0, N);
+		Ez[ind(0,i,N)] = Edge(i, a, b, f, Ez2, 2, 0, N);
+		Ex[ind(N,i,0)] = Edge(i, a, b, f, Ex2, 2, N, 0);
+		Ey[ind(N,i,0)] = Edge(i, a, b, f, Ey2, 2, N, 0);
+		Ez[ind(N,i,0)] = Edge(i, a, b, f, Ez2, 2, N, 0);
+		Ex[ind(N,i,N)] = Edge(i, a, b, f, Ex2, 2, N, N);
+		Ey[ind(N,i,N)] = Edge(i, a, b, f, Ey2, 2, N, N);
+		Ez[ind(N,i,N)] = Edge(i, a, b, f, Ez2, 2, N, N);
+		
+		Ex[ind(0,0,i)] = Edge(i, a, b, f, Ex2, 3, 0, 0);
+		Ey[ind(0,0,i)] = Edge(i, a, b, f, Ey2, 3, 0, 0);
+		Ez[ind(0,0,i)] = Edge(i, a, b, f, Ez2, 3, 0, 0);
+		Ex[ind(0,N,i)] = Edge(i, a, b, f, Ex2, 3, 0, N);
+		Ey[ind(0,N,i)] = Edge(i, a, b, f, Ey2, 3, 0, N);
+		Ez[ind(0,N,i)] = Edge(i, a, b, f, Ez2, 3, 0, N);
+		Ex[ind(N,0,i)] = Edge(i, a, b, f, Ex2, 3, N, 0);
+		Ey[ind(N,0,i)] = Edge(i, a, b, f, Ey2, 3, N, 0);
+		Ez[ind(N,0,i)] = Edge(i, a, b, f, Ez2, 3, N, 0);
+		Ex[ind(N,N,i)] = Edge(i, a, b, f, Ex2, 3, N, N);
+		Ey[ind(N,N,i)] = Edge(i, a, b, f, Ey2, 3, N, N);
+		Ez[ind(N,N,i)] = Edge(i, a, b, f, Ez2, 3, N, N);
+	}
+	
+	return;
+}
+
+void EdgeCondH(){
+	double a = 0.25 * M_PI, b, d, f;
+	for(int i=0; i<=N-1; i++){
+		b = atan(1.*N/(sqrt(2)*abs(0.5*N-i)));
+		d = sqrt(0.5*N*N + (0.5*N-i)*(0.5*N-i));
+		f = sqrt((d-1.)/d);
+		Hx[ind(i,0,0)] = Edge(i, a, b, f, Hx2, 1, 0, 0);
+		Hy[ind(i,0,0)] = Edge(i, a, b, f, Hy2, 1, 0, 0);
+		Hz[ind(i,0,0)] = Edge(i, a, b, f, Hz2, 1, 0, 0);
+		Hx[ind(i,0,N)] = Edge(i, a, b, f, Hx2, 1, 0, N);
+		Hy[ind(i,0,N)] = Edge(i, a, b, f, Hy2, 1, 0, N);
+		Hz[ind(i,0,N)] = Edge(i, a, b, f, Hz2, 1, 0, N);
+		Hx[ind(i,N,0)] = Edge(i, a, b, f, Hx2, 1, N, 0);
+		Hy[ind(i,N,0)] = Edge(i, a, b, f, Hy2, 1, N, 0);
+		Hz[ind(i,N,0)] = Edge(i, a, b, f, Hz2, 1, N, 0);
+		Hx[ind(i,N,N)] = Edge(i, a, b, f, Hx2, 1, N, N);
+		Hy[ind(i,N,N)] = Edge(i, a, b, f, Hy2, 1, N, N);
+		Hz[ind(i,N,N)] = Edge(i, a, b, f, Hz2, 1, N, N);
+		
+		Hx[ind(0,i,0)] = Edge(i, a, b, f, Hx2, 2, 0, 0);
+		Hy[ind(0,i,0)] = Edge(i, a, b, f, Hy2, 2, 0, 0);
+		Hz[ind(0,i,0)] = Edge(i, a, b, f, Hz2, 2, 0, 0);
+		Hx[ind(0,i,N)] = Edge(i, a, b, f, Hx2, 2, 0, N);
+		Hy[ind(0,i,N)] = Edge(i, a, b, f, Hy2, 2, 0, N);
+		Hz[ind(0,i,N)] = Edge(i, a, b, f, Hz2, 2, 0, N);
+		Hx[ind(N,i,0)] = Edge(i, a, b, f, Hx2, 2, N, 0);
+		Hy[ind(N,i,0)] = Edge(i, a, b, f, Hy2, 2, N, 0);
+		Hz[ind(N,i,0)] = Edge(i, a, b, f, Hz2, 2, N, 0);
+		Hx[ind(N,i,N)] = Edge(i, a, b, f, Hx2, 2, N, N);
+		Hy[ind(N,i,N)] = Edge(i, a, b, f, Hy2, 2, N, N);
+		Hz[ind(N,i,N)] = Edge(i, a, b, f, Hz2, 2, N, N);
+		
+		Hx[ind(0,0,i)] = Edge(i, a, b, f, Hx2, 3, 0, 0);
+		Hy[ind(0,0,i)] = Edge(i, a, b, f, Hy2, 3, 0, 0);
+		Hz[ind(0,0,i)] = Edge(i, a, b, f, Hz2, 3, 0, 0);
+		Hx[ind(0,N,i)] = Edge(i, a, b, f, Hx2, 3, 0, N);
+		Hy[ind(0,N,i)] = Edge(i, a, b, f, Hy2, 3, 0, N);
+		Hz[ind(0,N,i)] = Edge(i, a, b, f, Hz2, 3, 0, N);
+		Hx[ind(N,0,i)] = Edge(i, a, b, f, Hx2, 3, N, 0);
+		Hy[ind(N,0,i)] = Edge(i, a, b, f, Hy2, 3, N, 0);
+		Hz[ind(N,0,i)] = Edge(i, a, b, f, Hz2, 3, N, 0);
+		Hx[ind(N,N,i)] = Edge(i, a, b, f, Hx2, 3, N, N);
+		Hy[ind(N,N,i)] = Edge(i, a, b, f, Hy2, 3, N, N);
+		Hz[ind(N,N,i)] = Edge(i, a, b, f, Hz2, 3, N, N);
+	}
+	
+	return;
+}
+
+double Edge(double i, double a, double b, double f, double W[], int p, bool p1, bool p2){
+	/********************/
+	if(p==1){
+		if(p1==false && p2==false){
+			if(i<1.*N/2) return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(i,0,0)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(i+1,0,0)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(i,1,0)]		+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(i+1,1,0)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(i,0,1)]		+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(i+1,0,1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(i,1,1)]		+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(i+1,1,1)] );
+			
+			else		 return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(i,0,0)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(i-1,0,0)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(i,1,0)]		+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(i-1,1,0)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(i,0,1)]		+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(i-1,0,1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(i,1,1)]		+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(i-1,1,1)] );
+		}else if(p1==false && p2==true){
+			if(i<1.*N/2) return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(i,0,N)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(i+1,0,N)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(i,1,N)]		+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(i+1,1,N)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(i,0,N-1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(i+1,0,N-1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(i,1,N-1)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(i+1,1,N-1)] );
+			
+			else		 return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(i,0,N)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(i-1,0,N)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(i,1,N)]		+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(i-1,1,N)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(i,0,N-1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(i-1,0,N-1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(i,1,N-1)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(i-1,1,N-1)] );
+		}else if(p1==true && p2==false){
+			if(i<1.*N/2) return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(i,N,0)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(i+1,N,0)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(i,N-1,0)]	+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(i+1,N-1,0)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(i,N,1)]		+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(i+1,N,1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(i,N-1,1)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(i+1,N-1,1)] );
+			
+			else		 return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(i,N,0)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(i-1,N,0)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(i,N-1,0)]	+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(i-1,N-1,0)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(i,N,1)]		+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(i-1,N,1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(i,N-1,1)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(i-1,N-1,1)] );
+		}else{
+			if(i<1.*N/2) return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(i,N,N)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(i+1,N,N)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(i,N-1,N)]	+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(i+1,N-1,N)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(i,N,N-1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(i+1,N,N-1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(i,N-1,N-1)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(i+1,N-1,N-1)] );
+			
+			else		 return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(i,N,N)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(i-1,N,N)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(i,N-1,N)]	+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(i-1,N-1,N)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(i,N,N-1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(i-1,N,N-1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(i,N-1,N-1)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(i-1,N-1,N-1)] );
+		}
+	/********************/
+	}else if(p==2){
+		if(p1==false && p2==false){
+			if(i<1.*N/2) return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(0,i,0)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(0,i+1,0)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(1,i,0)]		+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(1,i+1,0)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(0,i,1)]		+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(0,i+1,1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(1,i,1)]		+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(1,i+1,1)] );
+			
+			else		 return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(0,i,0)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(0,i-1,0)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(1,i,0)]		+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(1,i-1,0)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(0,i,1)]		+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(0,i-1,1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(1,i,1)]		+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(1,i-1,1)] );
+		}else if(p1==false && p2==true){
+			if(i<1.*N/2) return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(0,i,N)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(0,i+1,N)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(1,i,N)]		+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(1,i+1,N)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(0,i,N-1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(0,i+1,N-1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(1,i,N-1)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(1,i+1,N-1)] );
+			
+			else		 return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(0,i,N)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(0,i-1,N)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(1,i,N)]		+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(1,i-1,N)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(0,i,N-1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(0,i-1,N-1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(1,i,N-1)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(1,i-1,N-1)] );
+		}else if(p1==true && p2==false){
+			if(i<1.*N/2) return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(N,i,0)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(N,i+1,0)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(N-1,i,0)]	+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(N-1,i+1,0)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(N,i,1)]		+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(N,i+1,1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(N-1,i,1)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(N-1,i+1,1)] );
+			
+			else		 return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(N,i,0)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(N,i-1,0)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(N-1,i,0)]	+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(N-1,i-1,0)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(N,i,1)]		+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(N,i-1,1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(N-1,i,1)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(N-1,i-1,1)] );
+		}else{
+			if(i<1.*N/2) return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(N,i,N)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(N,i+1,N)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(N-1,i,N)]	+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(N-1,i+1,N)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(N,i,N-1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(N,i+1,N-1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(N-1,i,N-1)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(N-1,i+1,N-1)] );
+			
+			else		 return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(N,i,N)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(N,i-1,N)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(N-1,i,N)]	+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(N-1,i-1,N)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(N,i,N-1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(N,i-1,N-1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(N-1,i,N-1)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(N-1,i-1,N-1)] );
+		}
+	/********************/
+	}else if(p==3){
+		if(p1==false && p2==false){
+			if(i<1.*N/2) return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(0,0,i)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(0,0,i+1)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(0,1,i)]		+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(0,1,i+1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(1,0,i)]		+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(1,0,i+1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(1,1,i)]		+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(1,1,i+1)] );
+			
+			else		 return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(0,0,i)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(0,0,i-1)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(0,1,i)]		+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(0,1,i-1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(1,0,i)]		+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(1,0,i-1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(1,1,i)]		+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(1,1,i-1)] );
+		}else if(p1==false && p2==true){
+			if(i<1.*N/2) return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(0,N,i)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(0,N,i+1)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(0,N-1,i)]	+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(0,N-1,i+1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(1,N,i)]		+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(1,N,i+1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(1,N-1,i)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(1,N-1,i+1)] );
+			
+			else		 return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(0,N,i)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(0,N,i-1)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(0,N-1,i)]		+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(0,N-1,i-1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(1,N,i)]		+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(1,N,i-1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(1,N-1,i)]		+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(1,N-1,i-1)] );
+		}else if(p1==true && p2==false){
+			if(i<1.*N/2) return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(N,0,i)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(N,0,i+1)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(N,1,i)]		+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(N,1,i+1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(N-1,0,i)]	+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(N-1,0,i+1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(N-1,1,i)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(N-1,1,i+1)] );
+			
+			else		 return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(N,0,i)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(N,0,i-1)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(N,1,i)]		+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(N,1,i-1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(N-1,0,i)]	+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(N-1,0,i-1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(N-1,1,i)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(N-1,1,i-1)] );
+		}else{
+			if(i<1.*N/2) return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(N,N,i)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(N,N,i+1)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(N,N-1,i)]	+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(N,N-1,i+1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(N-1,N,i)]	+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(N-1,N,i+1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(N-1,N-1,i)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(N-1,N-1,i+1)] );
+			
+			else		 return f * (
+						 (1-sin(b))*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))	* W[ind(N,N,i)]		+
+						 (1-sin(b))*(1-cos(b)*sin(a))*cos(b)*cos(a)		* W[ind(N,N,i-1)]	+
+						 (1-sin(b))*cos(b)*sin(a)*(1-cos(b)*cos(a))		* W[ind(N,N-1,i)]	+
+						 (1-sin(b))*cos(b)*cos(b)*sin(a)*cos(a)			* W[ind(N,N-1,i-1)]	+
+						 sin(b)*(1-cos(b)*sin(a))*(1-cos(b)*cos(a))		* W[ind(N-1,N,i)]	+
+						 sin(b)*(1-cos(b)*sin(a))*cos(b)*cos(a)			* W[ind(N-1,N,i-1)]	+
+						 sin(b)*cos(b)*(1-cos(b)*cos(a))				* W[ind(N-1,N-1,i)]	+
+						 sin(b)*cos(b)*cos(b)*sin(a)*cos(a)				* W[ind(N-1,N-1,i-1)] );
+		}
+	}
 	return 0;
 }

@@ -18,16 +18,17 @@ def ind(i,j,k):
 
 ### Animation ###
 fig = plt.figure()
-plt.ylim([0,3])
-plt.xlim([0,10])
 
 def iteration(i):
 	global x_
+	global x
 	plt.cla()
-	plt.autoscale(False)
+	plt.ylim([0,3])
+	plt.xlim([0,10])
 	E = np.sqrt((fin[str(i)]['Ex'][:])**2+(fin[str(i)]['Ey'][:])**2+(fin[str(i)]['Ez'][:])**2)
 	plt.plot(x,E[ind(N/2,N/2,x_)])
+	print(i)
 	return
 
 animation = ani.FuncAnimation(fig, iteration, iterations, interval=25)
-plt.show();
+plt.show()
