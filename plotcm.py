@@ -24,8 +24,8 @@ def init():
 	global x
 	global y
 	global cbar
-	E = np.sqrt((fin["0"]['Ex'][:])**2+(fin["0"]['Ey'][:])**2+(fin["0"]['Ez'][:])**2)
-	pylab.pcolor(E[ind(x,N/2,y)])
+	E = np.sqrt((fin["0"]['Ex'][:])**2)
+	pylab.pcolor(E[ind(x,y,N/2)])
 	plt.clim(0,1)
 	cbar = pylab.colorbar()
 
@@ -37,8 +37,8 @@ def iteration(i):
 	
 	plt.ylim([0,N])
 	plt.xlim([0,N])
-	E = np.sqrt((fin[str(i)]['Ex'][:])**2+(fin[str(i)]['Ey'][:])**2+(fin[str(i)]['Ez'][:])**2)
-	pylab.pcolor(E[ind(x,N/2,y)])
+	E = np.absolute(fin[str(i)]['Ex'][:])
+	pylab.pcolor(E[ind(x,y,50)])
 	plt.clim(0,0.1)
 	cbar.remove()
 	cbar = pylab.colorbar()

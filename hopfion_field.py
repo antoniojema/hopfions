@@ -1,54 +1,63 @@
-import sympy as sym
 import numpy as np
-import h5py as h5
-import time
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 
-p = 2
-q = 3
+def Fx(x,y,z,t):
+	return 24*(((x - 1j*y)**2*(-1 - t**2 + x**2 + y**2 + (2*1j)*z + z**2)*(-4/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((16*1j)*t)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (24*t**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((16*1j)*t**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (4*t**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((16*1j)*t*x**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*t**2*x**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (4*x**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*x*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (16*t*x*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*t**2*x*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*x**3*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*x*y**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (4*y**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (24*t*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((24*1j)*t**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*t**3*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*x**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*t*x**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*y**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*t*y**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*x*y*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*y**2*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*z**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*t*z**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (4*z**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4))/(-(-1j + t)**2 + x**2 + y**2 + z**2)**3)
 
-x, y, z, t = sym.symbols('x y z t')
+def Fy(x,y,z,t):
+	return 24*(((x - 1j*y)**2*(-1 - t**2 + x**2 + y**2 + (2*1j)*z + z**2)*((4*1j)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (16*t)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((24*1j)*t**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (16*t**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((4*1j)*t**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((4*1j)*x**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((16*1j)*t*x*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*t**2*x*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x**3*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*y**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (16*t*y**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*t**2*y**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x*y**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((4*1j)*y**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((24*1j)*t*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (24*t**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*t**3*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*x**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*t*x**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*y**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*t*y**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*x**2*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x*y*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*z**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*t*z**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((4*1j)*z**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4))/(-(-1j + t)**2 + x**2 + y**2 + z**2)**3)
 
-a = (x*x+y*y+z*z-t*t-1+2*1j*z)/(x*x+y*y+z*z-(t-1j)*(t-1j))
-b = 2*(x-1j*y)/(x*x+y*y+z*z-(t-1j)*(t-1j))
+def Fz(x,y,z,t):
+	return 24*(((x - 1j*y)**2*(-1 - t**2 + x**2 + y**2 + (2*1j)*z + z**2)*(((-8*1j)*x)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (24*t*x)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((24*1j)*t**2*x)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*t**3*x)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*x**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*t*x**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((24*1j)*t*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (24*t**2*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*t**3*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x**2*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*t*x**2*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*x*y**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*t*x*y**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*y**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*t*y**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((16*1j)*t*x*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*t**2*x*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x**3*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*y*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (16*t*y*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*t**2*y*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*x**2*y*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x*y**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*y**3*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*x*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*t*x*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*y*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*t*y*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x*z**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*y*z**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4))/(-(-1j + t)**2 + x**2 + y**2 + z**2)**3)
 
-Da = np.array([sym.diff(a,x),sym.diff(a,y),sym.diff(a,z)])
-Db = np.array([sym.diff(b,x),sym.diff(b,y),sym.diff(b,z)])
+'''''
+import pylab
+N=100
+x = np.array([0.1*(i-0.5*N) for i in range(N+1)])
+y = np.array([0.1*(i-0.5*N) for i in range(N+1)])
+x,y = np.meshgrid(x,y)
+plt.figure(1)
+pylab.pcolor( (Fx(x,y,0,-1.5)).real )
+pylab.colorbar()
+plt.figure(2)
+pylab.pcolor( (Fy(x,y,0,-1.5)).real )
+pylab.colorbar()
+plt.figure(3)
+pylab.pcolor( (Fz(x,y,0,-1.5)).real )
+pylab.colorbar()
+plt.show()
+'''
 
-F = p*q * a**(p-1)*b**(q-1) * np.cross(Da,Db)
+N_ = 3
+N = 1000000
+D = 0.0001
+alpha = 0.1
 
-N = 100
-D = 1./10
+x = [[0 for j in range(N)] for i in range(N_)]
+y = [[0 for j in range(N)] for i in range(N_)]
+z = [[0 for j in range(N)] for i in range(N_)]
+if N_ == 1:
+	x[i][0] = 1.
+	y[i][0] = 1.
+	z[i][0] = 0.
+else:
+	for i in range(N_):
+		x[i][0] = np.cos((-alpha*(i-N_+2))/(N_-1))
+		y[i][0] = np.sin((-alpha*(i-N_+2))/(N_-1))
+		z[i][0] = 0.
 
-#E = np.array([[[ (complex(F[0].subs(x,(i-0.5*N)/scale).subs(y,(j-0.5*N)/scale).subs(z,(k-0.5*N)/scale).subs(t,-1.5)).real)**2 + (complex(F[1].subs(x,(i-0.5*N)/scale).subs(y,(j-0.5*N)/scale).subs(z,(k-0.5*N)/scale).subs(t,-1.5)).real)**2 + (complex(F[2].subs(x,(i-0.5*N)/scale).subs(y,(j-0.5*N)/scale).subs(z,(k-0.5*N)/scale).subs(t,-1.5)).real)**2 for k in range(N+1)] for j in range(N+1)] for i in range(N+1)])
+for i in np.arange(1,N,1):
+	print 100.*i/N,' %'
 
-t0 = time.time()
+	for j in range(N_):
+		x[j][i] = x[j][i-1] + D * (Fx(x[j][i-1],y[j][i-1],z[j][i-1],-1.5)).real
+		y[j][i] = y[j][i-1] + D * (Fy(x[j][i-1],y[j][i-1],z[j][i-1],-1.5)).real
+		z[j][i] = z[j][i-1] + D * (Fz(x[j][i-1],y[j][i-1],z[j][i-1],-1.5)).real
 
-Ex = np.array([[[complex(F[0].subs(x,D*(i-0.5*N)).subs(y,D*(j+0.5-0.5*N)).subs(z,D*(k+0.5-0.5*N)).subs(t,-1.5-0.5*D)).real for k in range(N+1)] for j in range(N+1)] for i in range(N+1)])
-Ey = np.array([[[complex(F[1].subs(x,D*(i+0.5-0.5*N)).subs(y,D*(j-0.5*N)).subs(z,D*(k+0.5-0.5*N)).subs(t,-1.5-0.5*D)).real for k in range(N+1)] for j in range(N+1)] for i in range(N+1)])
-Ez = np.array([[[complex(F[2].subs(x,D*(i+0.5-0.5*N)).subs(y,D*(j+0.5-0.5*N)).subs(z,D*(k-0.5*N)).subs(t,-1.5-0.5*D)).real for k in range(N+1)] for j in range(N+1)] for i in range(N+1)])
 
-Hx = np.array([[[complex(F[0].subs(x,D*(i+0.5-0.5*N)).subs(y,D*(j-0.5*N)).subs(z,D*(k-0.5*N)).subs(t,-1.5)).imag for k in range(N+1)] for j in range(N+1)] for i in range(N+1)])
-Hy = np.array([[[complex(F[1].subs(x,D*(i-0.5*N)).subs(y,D*(j+0.5-0.5*N)).subs(z,D*(k-0.5*N)).subs(t,-1.5)).imag for k in range(N+1)] for j in range(N+1)] for i in range(N+1)])
-Hz = np.array([[[complex(F[2].subs(x,D*(i-0.5*N)).subs(y,D*(j-0.5*N)).subs(z,D*(k+0.5-0.5*N)).subs(t,-1.5)).imag for k in range(N+1)] for j in range(N+1)] for i in range(N+1)])
-
-print '%.2f' % (time.time()-t0) , ' s'
-
-fout = h5.File('hopfion_init.h5','w')
-fout2 = h5.File('hopfion_init_security.h5','w')
-
-fout['Ex'] = Ex
-fout['Ey'] = Ey
-fout['Ez'] = Ez
-fout['Hx'] = Hx
-fout['Hy'] = Hy
-fout['Hz'] = Hz
-
-fout2['Ex'] = Ex
-fout2['Ey'] = Ey
-fout2['Ez'] = Ez
-fout2['Hx'] = Hx
-fout2['Hy'] = Hy
-fout2['Hz'] = Hz
-
-fout.close()
-fout2.close()
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+for i in range(N_):
+	ax.plot(x[i][:],y[i][:],z[i][:],label=str((0.9*i-1.1*(i-N_+1))/(N_-1)))
+plt.show()
