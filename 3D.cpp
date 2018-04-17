@@ -16,6 +16,7 @@ double Ex1[(N+1)*(N+1)*(N+1)], Ey1[(N+1)*(N+1)*(N+1)], Ez1[(N+1)*(N+1)*(N+1)];
 double Hx1[(N+1)*(N+1)*(N+1)], Hy1[(N+1)*(N+1)*(N+1)], Hz1[(N+1)*(N+1)*(N+1)];
 double Ex2[(N+1)*(N+1)*(N+1)], Ey2[(N+1)*(N+1)*(N+1)], Ez2[(N+1)*(N+1)*(N+1)];
 double Hx2[(N+1)*(N+1)*(N+1)], Hy2[(N+1)*(N+1)*(N+1)], Hz2[(N+1)*(N+1)*(N+1)];
+double data_in[N+1][N+1][N+1];
 
 int ind(int i, int j, int k){
 	return (N+1)*(N+1)*i+(N+1)*j+k;
@@ -52,15 +53,82 @@ int main(){
 	C3 = c*c*Dt*Dt/(2*Dx*(c*Dt+Dx));
 	
 	/* Initial conditions */
+	H5File* fin = new H5File("hopfion_init.h5", H5F_ACC_RDONLY);
+	DataSet* dset_in = new DataSet;
+	*dset_in = fin -> openDataSet("Ex");
+	H5T_class_t type_in = dset_in -> getTypeClass();
+	DataSpace* dspace_in = new DataSpace;
+	*dspace_in = dset_in -> getSpace();
+	int rank_in = dspace_in -> getSimpleExtentNdims();
+	hsize_t dims_in[rank_in];
+	int ndims = dspace_in -> getSimpleExtentDims(dims_in, NULL);
+	DataSpace* mspace_in = new DataSpace(rank_in,dims_in);
+	
+	dset_in -> read(data_in, PredType::NATIVE_FLOAT, *mspace_in, *dspace_in);
 	for(i=0; i<=N; i++){
 		for(j=0; j<=N; j++){
 			for(k=0; k<=N; k++){
-				Ex[ind(i,j,k)] = 0;
-				Ey[ind(i,j,k)] = 0;
-				Ez[ind(i,j,k)] = 0;
-				Hx[ind(i,j,k)] = 0;
-				Hy[ind(i,j,k)] = 0;
-				Hz[ind(i,j,k)] = 0;
+				Ex[ind(i,j,k)] = data_in[i][j][k];
+			}
+		}
+	}
+	
+	*dset_in = fin -> openDataSet("Ey");
+	*dspace_in = dset_in -> getSpace();
+	mspace_in = new DataSpace(rank_in,dims_in);
+	dset_in -> read(data_in, PredType::NATIVE_FLOAT, *mspace_in, *dspace_in);
+	for(i=0; i<=N; i++){
+		for(j=0; j<=N; j++){
+			for(k=0; k<=N; k++){
+				Ey[ind(i,j,k)] = data_in[i][j][k];
+			}
+		}
+	}
+	
+	*dset_in = fin -> openDataSet("Ez");
+	*dspace_in = dset_in -> getSpace();
+	mspace_in = new DataSpace(rank_in,dims_in);
+	dset_in -> read(data_in, PredType::NATIVE_FLOAT, *mspace_in, *dspace_in);
+	for(i=0; i<=N; i++){
+		for(j=0; j<=N; j++){
+			for(k=0; k<=N; k++){
+				Ez[ind(i,j,k)] = data_in[i][j][k];
+			}
+		}
+	}
+	
+	*dset_in = fin -> openDataSet("Hx");
+	*dspace_in = dset_in -> getSpace();
+	mspace_in = new DataSpace(rank_in,dims_in);
+	dset_in -> read(data_in, PredType::NATIVE_FLOAT, *mspace_in, *dspace_in);
+	for(i=0; i<=N; i++){
+		for(j=0; j<=N; j++){
+			for(k=0; k<=N; k++){
+				Hx[ind(i,j,k)] = data_in[i][j][k];
+			}
+		}
+	}
+	
+	*dset_in = fin -> openDataSet("Hy");
+	*dspace_in = dset_in -> getSpace();
+	mspace_in = new DataSpace(rank_in,dims_in);
+	dset_in -> read(data_in, PredType::NATIVE_FLOAT, *mspace_in, *dspace_in);
+	for(i=0; i<=N; i++){
+		for(j=0; j<=N; j++){
+			for(k=0; k<=N; k++){
+				Hy[ind(i,j,k)] = data_in[i][j][k];
+			}
+		}
+	}
+	
+	*dset_in = fin -> openDataSet("Hz");
+	*dspace_in = dset_in -> getSpace();
+	mspace_in = new DataSpace(rank_in,dims_in);
+	dset_in -> read(data_in, PredType::NATIVE_FLOAT, *mspace_in, *dspace_in);
+	for(i=0; i<=N; i++){
+		for(j=0; j<=N; j++){
+			for(k=0; k<=N; k++){
+				Hz[ind(i,j,k)] = data_in[i][j][k];
 			}
 		}
 	}
@@ -117,7 +185,7 @@ int main(){
 									 Ze * (Hx[ind(i,j,k+1)] - Hx[ind(i,j,k)]);
 					Ez[ind(i,j,k)] = A * Ez[ind(i,j,k)] + Ye * (Hx[ind(i,j,k)] - Hx[ind(i,j+1,k)]) +
 									 Xe * (Hy[ind(i+1,j,k)] - Hy[ind(i,j,k)]);
-					/** Current **/
+					/** Current **
 					if (i>=4*N/10 && i<6*N/10 && j>=4*N/10 && j<6*N/10 && k>=4*N/10 && k<6*N/10 && n<=31){
 						Ex[ind(i,j,k)] -= exp(-0.5*((i-N/2)*(i-N/2)+(j-N/2)*(j-N/2)+(k-N/2)*(k-N/2)))*sin(0.2*n);
 					}
@@ -279,8 +347,16 @@ int main(){
 		dset = fout.createDataSet("/"+to_string(n)+"/Hz", PredType::NATIVE_DOUBLE, dspace);
 		dset.write(Hz, PredType::NATIVE_DOUBLE);
 		
-		cout << 100.*n/iterations << " %" << endl;
+		cout << "\r[";
+		for (i=0; i<(int)(50.*n/iterations); i++){
+			cout << "#";
+		}
+		for (i=(int)(50.*n/iterations); i<50; i++){
+			cout << " ";
+		}
+		cout << "] " << 100.*n/iterations << " %";
 	}
+	cout << "\n";
 	}catch(FileIException error){
 	error.printError();
 	return -1;
