@@ -9,7 +9,7 @@ using namespace H5;
 double A, Xe, Ye, Ze;
 double B, Xm, Ym, Zm;
 double C1, C2, C3;
-const int N=100, iterations=200;
+const int N=200, iterations=200;
 double Ex[(N+1)*(N+1)*(N+1)],  Ey[(N+1)*(N+1)*(N+1)],  Ez[(N+1)*(N+1)*(N+1)];
 double Hx[(N+1)*(N+1)*(N+1)],  Hy[(N+1)*(N+1)*(N+1)],  Hz[(N+1)*(N+1)*(N+1)];
 double Ex1[(N+1)*(N+1)*(N+1)], Ey1[(N+1)*(N+1)*(N+1)], Ez1[(N+1)*(N+1)*(N+1)];
@@ -52,7 +52,7 @@ int main(){
 	C2 = 2*Dx/(c*Dt+Dx);
 	C3 = c*c*Dt*Dt/(2*Dx*(c*Dt+Dx));
 	
-	/* Initial conditions */
+	/* Initial conditions */ //THERE IS SOME MISTAKE HERE, DOESN'T READ DATA CORRECTLY (SEE "prueba.cpp")
 	H5File* fin = new H5File("hopfion_init.h5", H5F_ACC_RDONLY);
 	DataSet* dset_in = new DataSet;
 	*dset_in = fin -> openDataSet("Ex");
@@ -64,7 +64,7 @@ int main(){
 	int ndims = dspace_in -> getSimpleExtentDims(dims_in, NULL);
 	DataSpace* mspace_in = new DataSpace(rank_in,dims_in);
 	
-	dset_in -> read(data_in, PredType::NATIVE_FLOAT, *mspace_in, *dspace_in);
+	dset_in -> read(data_in, PredType::NATIVE_DOUBLE, *mspace_in, *dspace_in);
 	for(i=0; i<=N; i++){
 		for(j=0; j<=N; j++){
 			for(k=0; k<=N; k++){
@@ -76,7 +76,7 @@ int main(){
 	*dset_in = fin -> openDataSet("Ey");
 	*dspace_in = dset_in -> getSpace();
 	mspace_in = new DataSpace(rank_in,dims_in);
-	dset_in -> read(data_in, PredType::NATIVE_FLOAT, *mspace_in, *dspace_in);
+	dset_in -> read(data_in, PredType::NATIVE_DOUBLE, *mspace_in, *dspace_in);
 	for(i=0; i<=N; i++){
 		for(j=0; j<=N; j++){
 			for(k=0; k<=N; k++){
@@ -88,7 +88,7 @@ int main(){
 	*dset_in = fin -> openDataSet("Ez");
 	*dspace_in = dset_in -> getSpace();
 	mspace_in = new DataSpace(rank_in,dims_in);
-	dset_in -> read(data_in, PredType::NATIVE_FLOAT, *mspace_in, *dspace_in);
+	dset_in -> read(data_in, PredType::NATIVE_DOUBLE, *mspace_in, *dspace_in);
 	for(i=0; i<=N; i++){
 		for(j=0; j<=N; j++){
 			for(k=0; k<=N; k++){
@@ -100,7 +100,7 @@ int main(){
 	*dset_in = fin -> openDataSet("Hx");
 	*dspace_in = dset_in -> getSpace();
 	mspace_in = new DataSpace(rank_in,dims_in);
-	dset_in -> read(data_in, PredType::NATIVE_FLOAT, *mspace_in, *dspace_in);
+	dset_in -> read(data_in, PredType::NATIVE_DOUBLE, *mspace_in, *dspace_in);
 	for(i=0; i<=N; i++){
 		for(j=0; j<=N; j++){
 			for(k=0; k<=N; k++){
@@ -112,7 +112,7 @@ int main(){
 	*dset_in = fin -> openDataSet("Hy");
 	*dspace_in = dset_in -> getSpace();
 	mspace_in = new DataSpace(rank_in,dims_in);
-	dset_in -> read(data_in, PredType::NATIVE_FLOAT, *mspace_in, *dspace_in);
+	dset_in -> read(data_in, PredType::NATIVE_DOUBLE, *mspace_in, *dspace_in);
 	for(i=0; i<=N; i++){
 		for(j=0; j<=N; j++){
 			for(k=0; k<=N; k++){
@@ -124,7 +124,7 @@ int main(){
 	*dset_in = fin -> openDataSet("Hz");
 	*dspace_in = dset_in -> getSpace();
 	mspace_in = new DataSpace(rank_in,dims_in);
-	dset_in -> read(data_in, PredType::NATIVE_FLOAT, *mspace_in, *dspace_in);
+	dset_in -> read(data_in, PredType::NATIVE_DOUBLE, *mspace_in, *dspace_in);
 	for(i=0; i<=N; i++){
 		for(j=0; j<=N; j++){
 			for(k=0; k<=N; k++){
@@ -166,15 +166,41 @@ int main(){
 	hsize_t dimsa[1] = { 1 };
 	DataSpace attrds = DataSpace(1, dimsa);
 	Attribute attr = fout.createAttribute("N",PredType::NATIVE_INT, attrds);
-	//Attribute attr = dset.createAttribute("N",PredType::NATIVE_INT, attrds); 
 	int attr_N[1] = {N};
 	attr.write(PredType::NATIVE_INT, attr_N);
 	attr = fout.createAttribute("iterations",PredType::NATIVE_INT, attrds);
-	//attr = dset.createAttribute("iterations",PredType::NATIVE_INT, attrds);
 	int attr_it[1] = {iterations};
 	attr.write(PredType::NATIVE_INT, attr_it);
+	attr = fout.createAttribute("Dx",PredType::NATIVE_DOUBLE, attrds);
+	double attr_Dx[1] = {Dx};
+	attr.write(PredType::NATIVE_DOUBLE, attr_Dx);
+	attr = fout.createAttribute("Dy",PredType::NATIVE_DOUBLE, attrds);
+	double attr_Dy[1] = {Dy};
+	attr.write(PredType::NATIVE_DOUBLE, attr_Dy);
+	attr = fout.createAttribute("Dz",PredType::NATIVE_DOUBLE, attrds);
+	double attr_Dz[1] = {Dz};
+	attr.write(PredType::NATIVE_DOUBLE, attr_Dz);
+	attr = fout.createAttribute("Dt",PredType::NATIVE_DOUBLE, attrds);
+	double attr_Dt[1] = {Dt};
+	attr.write(PredType::NATIVE_DOUBLE, attr_Dt);
 	
 	for(n=0; n<=iterations; n++){
+		
+		/* Data -> h5 */
+		grp = fout.createGroup("/" + to_string(n));
+		dset = fout.createDataSet("/"+to_string(n)+"/Ex", PredType::NATIVE_DOUBLE, dspace);
+		dset.write(Ex, PredType::NATIVE_DOUBLE);
+		dset = fout.createDataSet("/"+to_string(n)+"/Ey", PredType::NATIVE_DOUBLE, dspace);
+		dset.write(Ey, PredType::NATIVE_DOUBLE);
+		dset = fout.createDataSet("/"+to_string(n)+"/Ez", PredType::NATIVE_DOUBLE, dspace);
+		dset.write(Ez, PredType::NATIVE_DOUBLE);
+		dset = fout.createDataSet("/"+to_string(n)+"/Hx", PredType::NATIVE_DOUBLE, dspace);
+		dset.write(Hx, PredType::NATIVE_DOUBLE);
+		dset = fout.createDataSet("/"+to_string(n)+"/Hy", PredType::NATIVE_DOUBLE, dspace);
+		dset.write(Hy, PredType::NATIVE_DOUBLE);
+		dset = fout.createDataSet("/"+to_string(n)+"/Hz", PredType::NATIVE_DOUBLE, dspace);
+		dset.write(Hz, PredType::NATIVE_DOUBLE);
+		
 		/***** E *****/
 		for(i=0; i<=N-1; i++){
 			for(j=0; j<=N-1; j++){
@@ -332,26 +358,28 @@ int main(){
 			}
 		}
 		
-		/* Data -> h5 */
-		grp = fout.createGroup("/" + to_string(n));
-		dset = fout.createDataSet("/"+to_string(n)+"/Ex", PredType::NATIVE_DOUBLE, dspace);
-		dset.write(Ex, PredType::NATIVE_DOUBLE);
-		dset = fout.createDataSet("/"+to_string(n)+"/Ey", PredType::NATIVE_DOUBLE, dspace);
-		dset.write(Ey, PredType::NATIVE_DOUBLE);
-		dset = fout.createDataSet("/"+to_string(n)+"/Ez", PredType::NATIVE_DOUBLE, dspace);
-		dset.write(Ez, PredType::NATIVE_DOUBLE);
-		dset = fout.createDataSet("/"+to_string(n)+"/Hx", PredType::NATIVE_DOUBLE, dspace);
-		dset.write(Hx, PredType::NATIVE_DOUBLE);
-		dset = fout.createDataSet("/"+to_string(n)+"/Hy", PredType::NATIVE_DOUBLE, dspace);
-		dset.write(Hy, PredType::NATIVE_DOUBLE);
-		dset = fout.createDataSet("/"+to_string(n)+"/Hz", PredType::NATIVE_DOUBLE, dspace);
-		dset.write(Hz, PredType::NATIVE_DOUBLE);
+		/* Data -> h5 if last iteration*/
+		if(n==iterations){
+			grp = fout.createGroup("/" + to_string(n+1));
+			dset = fout.createDataSet("/"+to_string(n+1)+"/Ex", PredType::NATIVE_DOUBLE, dspace);
+			dset.write(Ex, PredType::NATIVE_DOUBLE);
+			dset = fout.createDataSet("/"+to_string(n+1)+"/Ey", PredType::NATIVE_DOUBLE, dspace);
+			dset.write(Ey, PredType::NATIVE_DOUBLE);
+			dset = fout.createDataSet("/"+to_string(n+1)+"/Ez", PredType::NATIVE_DOUBLE, dspace);
+			dset.write(Ez, PredType::NATIVE_DOUBLE);
+			dset = fout.createDataSet("/"+to_string(n+1)+"/Hx", PredType::NATIVE_DOUBLE, dspace);
+			dset.write(Hx, PredType::NATIVE_DOUBLE);
+			dset = fout.createDataSet("/"+to_string(n+1)+"/Hy", PredType::NATIVE_DOUBLE, dspace);
+			dset.write(Hy, PredType::NATIVE_DOUBLE);
+			dset = fout.createDataSet("/"+to_string(n+1)+"/Hz", PredType::NATIVE_DOUBLE, dspace);
+			dset.write(Hz, PredType::NATIVE_DOUBLE);
+		}
 		
 		cout << "\r[";
-		for (i=0; i<(int)(50.*n/iterations); i++){
+		for (i=0; i<(50*n/iterations); i++){
 			cout << "#";
 		}
-		for (i=(int)(50.*n/iterations); i<50; i++){
+		for (i=(50*n/iterations); i<50; i++){
 			cout << " ";
 		}
 		cout << "] " << 100.*n/iterations << " %";

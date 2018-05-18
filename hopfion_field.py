@@ -1,63 +1,58 @@
 import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
+import time
+import h5py as h5
+from F25 import *
 
-def Fx(x,y,z,t):
-	return 24*(((x - 1j*y)**2*(-1 - t**2 + x**2 + y**2 + (2*1j)*z + z**2)*(-4/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((16*1j)*t)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (24*t**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((16*1j)*t**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (4*t**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((16*1j)*t*x**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*t**2*x**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (4*x**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*x*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (16*t*x*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*t**2*x*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*x**3*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*x*y**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (4*y**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (24*t*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((24*1j)*t**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*t**3*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*x**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*t*x**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*y**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*t*y**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*x*y*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*y**2*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*z**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*t*z**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (4*z**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4))/(-(-1j + t)**2 + x**2 + y**2 + z**2)**3)
+N = 200
+D = 0.05
 
-def Fy(x,y,z,t):
-	return 24*(((x - 1j*y)**2*(-1 - t**2 + x**2 + y**2 + (2*1j)*z + z**2)*((4*1j)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (16*t)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((24*1j)*t**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (16*t**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((4*1j)*t**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((4*1j)*x**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((16*1j)*t*x*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*t**2*x*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x**3*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*y**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (16*t*y**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*t**2*y**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x*y**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((4*1j)*y**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((24*1j)*t*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (24*t**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*t**3*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*x**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*t*x**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*y**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*t*y**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*x**2*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x*y*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*z**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*t*z**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((4*1j)*z**4)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4))/(-(-1j + t)**2 + x**2 + y**2 + z**2)**3)
+t0 = time.time()
+I = np.array([[[i for k in range(N+1)] for j in range(N+1)] for i in range(N+1)])
+J = np.array([[[j for k in range(N+1)] for j in range(N+1)] for i in range(N+1)])
+K = np.array([[[k for k in range(N+1)] for j in range(N+1)] for i in range(N+1)])
 
-def Fz(x,y,z,t):
-	return 24*(((x - 1j*y)**2*(-1 - t**2 + x**2 + y**2 + (2*1j)*z + z**2)*(((-8*1j)*x)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (24*t*x)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((24*1j)*t**2*x)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*t**3*x)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*x**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*t*x**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((24*1j)*t*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (24*t**2*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*t**3*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x**2*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*t*x**2*y)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*x*y**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*t*x*y**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*y**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*t*y**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((16*1j)*t*x*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*t**2*x*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x**3*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*y*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (16*t*y*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*t**2*y*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*x**2*y*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x*y**2*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*y**3*z)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*x*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + (8*t*x*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*y*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - ((8*1j)*t*y*z**2)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 - (8*x*z**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4 + ((8*1j)*y*z**3)/(1 + (2*1j)*t - t**2 + x**2 + y**2 + z**2)**4))/(-(-1j + t)**2 + x**2 + y**2 + z**2)**3)
+Ex = ( Fx(   D*(I-0.5*N)   , D*(J+0.5-0.5*N) , D*(K+0.5-0.5*N) , -1.5-0.5*D ) ).real
+Ey = ( Fy( D*(I+0.5-0.5*N) ,   D*(J-0.5*N)   , D*(K+0.5-0.5*N) , -1.5-0.5*D ) ).real
+Ez = ( Fz( D*(I+0.5-0.5*N) , D*(J+0.5-0.5*N) ,   D*(K-0.5*N)   , -1.5-0.5*D ) ).real
 
-'''''
-import pylab
-N=100
-x = np.array([0.1*(i-0.5*N) for i in range(N+1)])
-y = np.array([0.1*(i-0.5*N) for i in range(N+1)])
-x,y = np.meshgrid(x,y)
-plt.figure(1)
-pylab.pcolor( (Fx(x,y,0,-1.5)).real )
-pylab.colorbar()
-plt.figure(2)
-pylab.pcolor( (Fy(x,y,0,-1.5)).real )
-pylab.colorbar()
-plt.figure(3)
-pylab.pcolor( (Fz(x,y,0,-1.5)).real )
-pylab.colorbar()
-plt.show()
-'''
+Hx = ( Fx( D*(I+0.5-0.5*N) ,   D*(J-0.5*N)   ,   D*(K-0.5*N)   ,    -1.5    ) ).imag
+Hy = ( Fy(   D*(I-0.5*N)   , D*(J+0.5-0.5*N) ,   D*(K-0.5*N)   ,    -1.5    ) ).imag
+Hz = ( Fz(   D*(I-0.5*N)   ,   D*(J-0.5*N)   , D*(K+0.5-0.5*N) ,    -1.5    ) ).imag
+print time.time()-t0 , ' s'
 
-N_ = 3
-N = 1000000
-D = 0.0001
-alpha = 0.1
+fout = h5.File('hopfion_init.h5','w')
+fout2 = h5.File('hopfion_init_sec.h5','w')
 
-x = [[0 for j in range(N)] for i in range(N_)]
-y = [[0 for j in range(N)] for i in range(N_)]
-z = [[0 for j in range(N)] for i in range(N_)]
-if N_ == 1:
-	x[i][0] = 1.
-	y[i][0] = 1.
-	z[i][0] = 0.
-else:
-	for i in range(N_):
-		x[i][0] = np.cos((-alpha*(i-N_+2))/(N_-1))
-		y[i][0] = np.sin((-alpha*(i-N_+2))/(N_-1))
-		z[i][0] = 0.
+fout['Ex'] = Ex
+fout['Ey'] = Ey
+fout['Ez'] = Ez
+fout['Hx'] = Hx
+fout['Hy'] = Hy
+fout['Hz'] = Hz
 
-for i in np.arange(1,N,1):
-	print 100.*i/N,' %'
+fout2['Ex'] = Ex
+fout2['Ey'] = Ey
+fout2['Ez'] = Ez
+fout2['Hx'] = Hx
+fout2['Hy'] = Hy
+fout2['Hz'] = Hz
 
-	for j in range(N_):
-		x[j][i] = x[j][i-1] + D * (Fx(x[j][i-1],y[j][i-1],z[j][i-1],-1.5)).real
-		y[j][i] = y[j][i-1] + D * (Fy(x[j][i-1],y[j][i-1],z[j][i-1],-1.5)).real
-		z[j][i] = z[j][i-1] + D * (Fz(x[j][i-1],y[j][i-1],z[j][i-1],-1.5)).real
+fout.close(); fout2.close();
 
 
-fig = plt.figure()
-ax = fig.gca(projection='3d')
-for i in range(N_):
-	ax.plot(x[i][:],y[i][:],z[i][:],label=str((0.9*i-1.1*(i-N_+1))/(N_-1)))
-plt.show()
+#Ex_ = [[0.25 * ( Ex[i][j][N/2] + Ex[i][j-1][N/2] + Ex[i][j][N/2-1] + Ex[i][j-1][N/2-1] ) for j in np.arange(1,N+1,1)] for i in np.arange(1,N+1,1)]
+#Ey_ = [[0.25 * ( Ey[i][j][N/2] + Ey[i][j][N/2-1] + Ey[i-1][j][N/2] + Ey[i-1][j][N/2-1] ) for j in np.arange(1,N+1,1)] for i in np.arange(1,N+1,1)]
+#Ez_ = [[0.25 * ( Ez[i][j][N/2] + Ez[i-1][j][N/2] + Ez[i][j-1][N/2] + Ez[i-1][j-1][N/2] ) for j in np.arange(1,N+1,1)] for i in np.arange(1,N+1,1)]
+
+#import matplotlib.pyplot as plt
+#import pylab
+#x = np.array([D*(i-0.5*N) for i in range(N+1)])
+#y = np.array([D*(i+0.5-0.5*N) for i in range(N+1)])
+#y,x = np.meshgrid(x,y)
+#plt.figure(0)
+#pylab.pcolor( np.abs(Ex[:][:][N/2-1]) ); pylab.colorbar();
+#plt.figure(1)
+#pylab.pcolor( np.abs(Ex_[:][:]) ); pylab.colorbar();
+#plt.figure(2)
+#pylab.pcolor( np.abs((Fx(x,y,0.05,-1.5-0.5*D)).real) ); pylab.colorbar();
+#plt.show()

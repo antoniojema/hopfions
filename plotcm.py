@@ -7,42 +7,62 @@ import h5py as h5
 #Open data file
 fin = h5.File('3D.h5','r')
 
-N = fin.attrs['N']
-iterations = fin.attrs['iterations']
+N = fin.attrs['N'][0]
+iterations = fin.attrs['iterations'][0]
+I = np.array([[i for j in range(N+1)] for i in range(N+1)])
+J = np.array([[j for j in range(N+1)] for i in range(N+1)])
 
 def ind(i,j,k):
 	return (N+1)*(N+1)*i+(N+1)*j+k
 
 ### Animation ###
 fig = plt.figure()
-plt.ylim([0,N])
-plt.xlim([0,N])
-
-y,x = np.meshgrid(range(N+1),range(N+1))
 
 def init():
-	global x
-	global y
 	global cbar
-	E = np.sqrt((fin["0"]['Ex'][:])**2)
-	pylab.pcolor(E[ind(x,y,N/2)])
-	plt.clim(0,1)
+	
+	#Ex = fin['0']['Ex'][:]
+	#Ey = fin['0']['Ey'][:]
+	Ez = fin['0']['Ez'][:]
+	#Ex = Ex[ind(I,J,N/2)]	
+	#Ey = Ey[ind(I,J,N/2)]
+	#Ez = 0.5*(Ez[ind(I,J,N/2)]+Ez[ind(I,J,N/2+1)])
+	#Ex = np.array([[0.5*(Ex[i][j] + Ex[i+1][j]) for j in range(N)] for i in range(N)])
+	#Ey = np.array([[0.5*(Ey[i][j] + Ey[i][j+1]) for j in range(N)] for i in range(N)])
+	#Ez = np.array([[Ez[i][j] for j in range(N)] for i in range(N)])
+	#P = Ex*Ex+Ey*Ey+Ez*Ez
+	
+	#pylab.pcolor(P)
+	Ez = Ez[ind(I,J,N/2)]
+	pylab.pcolor(Ez)
+	#plt.clim(0,1)
 	cbar = pylab.colorbar()
 
-def iteration(i):
-	global x
-	global y
+def iteration(n):
 	global cbar
+	global I
+	global J
 	plt.cla()
 	
-	plt.ylim([0,N])
-	plt.xlim([0,N])
-	E = np.absolute(fin[str(i)]['Ex'][:])
-	pylab.pcolor(E[ind(x,y,50)])
-	plt.clim(0,0.1)
+	#Ex = fin[str(n)]['Ex'][:]
+	#Ey = fin[str(n)]['Ey'][:]
+	Ez = fin[str(n)]['Ez'][:]
+	#Ex = Ex[ind(I,J,N/2)]	
+	#Ey = Ey[ind(I,J,N/2)]
+	#Ez = 0.5*(Ez[ind(I,J,N/2)]+Ez[ind(I,J,N/2+1)])
+	#Ex = np.array([[0.5*(Ex[i][j] + Ex[i+1][j]) for j in range(N)] for i in range(N)])
+	#Ey = np.array([[0.5*(Ey[i][j] + Ey[i][j+1]) for j in range(N)] for i in range(N)])
+	#Ez = np.array([[Ez[i][j] for j in range(N)] for i in range(N)])
+	#P = Ex*Ex+Ey*Ey+Ez*Ez
+	
+	print n
+	#pylab.pcolor(P)
+	Ez = Ez[ind(I,J,N/2)]
+	pylab.pcolor(abs(Ez))
+	#plt.clim(0,1)
 	cbar.remove()
 	cbar = pylab.colorbar()
 
-animation = ani.FuncAnimation(fig, iteration, np.arange(1,iterations/5+1,1)*5, interval=25, init_func=init)
+animation = ani.FuncAnimation(fig, iteration, np.arange(5,iterations,5), interval=25, init_func=init)
 plt.show()
 
