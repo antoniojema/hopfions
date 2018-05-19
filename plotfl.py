@@ -113,6 +113,7 @@ def Ez_interpolated(i,j,k):
 				    Ez[ind(I-1,J-1,K+1)] ] , d)
 
 def ind(i,j,k):
+	global N
 	return (N+1)*(N+1)*i+(N+1)*j+k
 
 #########################################################
@@ -122,7 +123,7 @@ fin = h5.File('/home/serron/Data/repo/hopfions/3D.h5','r')
 N = fin.attrs['N'][0]
 #iterations = fin.attrs['iterations'][0]
 Nlines = 1
-iters = 50000
+iters = 3000
 D = 0.1
 alpha=0.1
 
@@ -142,13 +143,13 @@ Ez = fin['0']['Ez'][:]
 
 #del P,Ex_,Ey_,Ez_
 
-I = np.array( [[0 for j in range(iters)] for i in range(Nlines)] )
-J = np.array( [[0 for j in range(iters)] for i in range(Nlines)] )
-K = np.array( [[0 for j in range(iters)] for i in range(Nlines)] )
+I = [[0 for j in range(iters)] for i in range(Nlines)]
+J = [[0 for j in range(iters)] for i in range(Nlines)]
+K = [[0 for j in range(iters)] for i in range(Nlines)]
 #I[0] = imax; J[0]=jmax; K[0]=kmax;
 if Nlines==1:
 	I[0][0] = 3*N/5
-	J[0][0] = 3*N/5
+	J[0][0] = N/2
 	K[0][0] = N/2
 else:
 	for i in range(Nlines):
@@ -163,7 +164,7 @@ for n in np.arange(1,iters,1):
 		Ex_ = Ex_interpolated(I[i][n-1],J[i][n-1],K[i][n-1])
 		Ey_ = Ey_interpolated(I[i][n-1],J[i][n-1],K[i][n-1])
 		Ez_ = Ez_interpolated(I[i][n-1],J[i][n-1],K[i][n-1])
-		E = Ex_*Ex_ + Ey_*Ey_ + Ez_*Ez_
+		E = np.sqrt(Ex_*Ex_ + Ey_*Ey_ + Ez_*Ez_)
 		I[i][n] = I[i][n-1] + D * Ex_/E
 		J[i][n] = J[i][n-1] + D * Ey_/E
 		K[i][n] = K[i][n-1] + D * Ez_/E
