@@ -118,7 +118,7 @@ def ind(i,j,k):
 
 #########################################################
 
-fin = h5.File('/home/serron/Data/repo/hopfions/3D.h5','r')
+fin = h5.File('simulation_results.h5','r')
 
 N = fin.attrs['N'][0]
 #iterations = fin.attrs['iterations'][0]

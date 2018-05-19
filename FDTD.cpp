@@ -157,7 +157,7 @@ int main(){
 	Exception::dontPrint();
 	
 	/* Prepare output file */
-	H5File fout("3D.h5", H5F_ACC_TRUNC);
+	H5File fout("simulation_results.h5", H5F_ACC_TRUNC);
 	hsize_t dimsf[1];
 	dimsf[0] = (N+1)*(N+1)*(N+1);
 	DataSpace dspace(1, dimsf);

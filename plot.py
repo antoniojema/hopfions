@@ -5,7 +5,7 @@ import pylab
 import h5py as h5
 
 #Open data file
-fin = h5.File('3D.h5','r')
+fin = h5.File('simulation_results.h5','r')
 
 N = fin.attrs['N'][0]
 iterations = fin.attrs['iterations'][0]
