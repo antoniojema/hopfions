@@ -4,24 +4,33 @@ import h5py as h5
 from F23 import *
 
 N = 200
-D = 0.05
+D = 10./N
+Dt = D/2.
 
 t0 = time.time()
-I = np.array([[[i for k in range(N+1)] for j in range(N+1)] for i in range(N+1)])
-J = np.array([[[j for k in range(N+1)] for j in range(N+1)] for i in range(N+1)])
-K = np.array([[[k for k in range(N+1)] for j in range(N+1)] for i in range(N+1)])
+I = D * (np.array([[[i for k in range(N+1)] for j in range(N+1)] for i in range(N+1)]) - 0.5*N)
+J = D * (np.array([[[j for k in range(N+1)] for j in range(N+1)] for i in range(N+1)]) - 0.5*N)
+K = D * (np.array([[[k for k in range(N+1)] for j in range(N+1)] for i in range(N+1)]) - 0.5*N)
 
-Ex = ( Fx(   D*(I-0.5*N)   , D*(J+0.5-0.5*N) , D*(K+0.5-0.5*N) , -1.5-0.5*D ) ).real
-Ey = ( Fy( D*(I+0.5-0.5*N) ,   D*(J-0.5*N)   , D*(K+0.5-0.5*N) , -1.5-0.5*D ) ).real
-Ez = ( Fz( D*(I+0.5-0.5*N) , D*(J+0.5-0.5*N) ,   D*(K-0.5*N)   , -1.5-0.5*D ) ).real
+Ex = ( Fx(    I    , J+0.5*D , K+0.5*D , -1.5-0.5*Dt ) ).real
+Ey = ( Fy( I+0.5*D ,    J    , K+0.5*D , -1.5-0.5*Dt ) ).real
+Ez = ( Fz( I+0.5*D , J+0.5*D ,    K    , -1.5-0.5*Dt ) ).real
 
-Hx = ( Fx( D*(I+0.5-0.5*N) ,   D*(J-0.5*N)   ,   D*(K-0.5*N)   ,    -1.5    ) ).imag
-Hy = ( Fy(   D*(I-0.5*N)   , D*(J+0.5-0.5*N) ,   D*(K-0.5*N)   ,    -1.5    ) ).imag
-Hz = ( Fz(   D*(I-0.5*N)   ,   D*(J-0.5*N)   , D*(K+0.5-0.5*N) ,    -1.5    ) ).imag
+Hx = ( Fx( I+0.5*D ,    J    ,    K    ,    -1.5     ) ).imag
+Hy = ( Fy(    I    , J+0.5*D ,    K    ,    -1.5     ) ).imag
+Hz = ( Fz(    I    ,    J    , K+0.5*D ,    -1.5     ) ).imag
+
+Ex2 = ( Fx(    I    , J+0.5*D , K+0.5*D , -1.5-1.5*Dt ) ).real
+Ey2 = ( Fy( I+0.5*D ,    J    , K+0.5*D , -1.5-1.5*Dt ) ).real
+Ez2 = ( Fz( I+0.5*D , J+0.5*D ,    K    , -1.5-1.5*Dt ) ).real
+
+Hx2 = ( Fx( I+0.5*D ,    J    ,    K    ,   -1.5-Dt   ) ).imag
+Hy2 = ( Fy(    I    , J+0.5*D ,    K    ,   -1.5-Dt   ) ).imag
+Hz2 = ( Fz(    I    ,    J    , K+0.5*D ,   -1.5-Dt   ) ).imag
+
 print time.time()-t0 , ' s'
 
 fout = h5.File('hopfion_init.h5','w')
-fout2 = h5.File('hopfion_init_sec.h5','w')
 
 fout['Ex'] = Ex
 fout['Ey'] = Ey
@@ -30,12 +39,12 @@ fout['Hx'] = Hx
 fout['Hy'] = Hy
 fout['Hz'] = Hz
 
-fout2['Ex'] = Ex
-fout2['Ey'] = Ey
-fout2['Ez'] = Ez
-fout2['Hx'] = Hx
-fout2['Hy'] = Hy
-fout2['Hz'] = Hz
+fout['Ex2'] = Ex2
+fout['Ey2'] = Ey2
+fout['Ez2'] = Ez2
+fout['Hx2'] = Hx2
+fout['Hy2'] = Hy2
+fout['Hz2'] = Hz2
 
-fout.close(); fout2.close();
+fout.close();
 

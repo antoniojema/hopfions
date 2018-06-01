@@ -30,10 +30,10 @@ int main(){
 	int n, i, j, k;
 	double sigma, sigmam, Dx, Dy, Dz, Dt, epsilon, mu, c, L, x;
 	
-	L=10;
 	sigma = sigmam = 0;
 	epsilon = mu = 1;
 	c=1;
+	L=10;
 	Dx = Dy = Dz = L/N;
 	Dt = Dx/(2*c);
 	
@@ -133,21 +133,87 @@ int main(){
 		}
 	}
 	
+	*dset_in = fin -> openDataSet("Ex2");
+	*dspace_in = dset_in -> getSpace();
+	mspace_in = new DataSpace(rank_in,dims_in);
+	dset_in -> read(data_in, PredType::NATIVE_DOUBLE, *mspace_in, *dspace_in);
 	for(i=0; i<=N; i++){
 		for(j=0; j<=N; j++){
 			for(k=0; k<=N; k++){
-				Ex1[ind(i,j,k)] = 0;
-				Ex2[ind(i,j,k)] = 0;
-				Ey1[ind(i,j,k)] = 0;
-				Ey2[ind(i,j,k)] = 0;
-				Ez1[ind(i,j,k)] = 0;
-				Ez2[ind(i,j,k)] = 0;
-				Hx1[ind(i,j,k)] = 0;
-				Hx2[ind(i,j,k)] = 0;
-				Hy1[ind(i,j,k)] = 0;
-				Hy2[ind(i,j,k)] = 0;
-				Hz1[ind(i,j,k)] = 0;
-				Hz2[ind(i,j,k)] = 0;
+				Ex2[ind(i,j,k)] = data_in[i][j][k];
+			}
+		}
+	}
+	
+	*dset_in = fin -> openDataSet("Ey2");
+	*dspace_in = dset_in -> getSpace();
+	mspace_in = new DataSpace(rank_in,dims_in);
+	dset_in -> read(data_in, PredType::NATIVE_DOUBLE, *mspace_in, *dspace_in);
+	for(i=0; i<=N; i++){
+		for(j=0; j<=N; j++){
+			for(k=0; k<=N; k++){
+				Ey2[ind(i,j,k)] = data_in[i][j][k];
+			}
+		}
+	}
+	
+	*dset_in = fin -> openDataSet("Ez2");
+	*dspace_in = dset_in -> getSpace();
+	mspace_in = new DataSpace(rank_in,dims_in);
+	dset_in -> read(data_in, PredType::NATIVE_DOUBLE, *mspace_in, *dspace_in);
+	for(i=0; i<=N; i++){
+		for(j=0; j<=N; j++){
+			for(k=0; k<=N; k++){
+				Ez2[ind(i,j,k)] = data_in[i][j][k];
+			}
+		}
+	}
+	
+	*dset_in = fin -> openDataSet("Hx2");
+	*dspace_in = dset_in -> getSpace();
+	mspace_in = new DataSpace(rank_in,dims_in);
+	dset_in -> read(data_in, PredType::NATIVE_DOUBLE, *mspace_in, *dspace_in);
+	for(i=0; i<=N; i++){
+		for(j=0; j<=N; j++){
+			for(k=0; k<=N; k++){
+				Hx2[ind(i,j,k)] = data_in[i][j][k];
+			}
+		}
+	}
+	
+	*dset_in = fin -> openDataSet("Hy2");
+	*dspace_in = dset_in -> getSpace();
+	mspace_in = new DataSpace(rank_in,dims_in);
+	dset_in -> read(data_in, PredType::NATIVE_DOUBLE, *mspace_in, *dspace_in);
+	for(i=0; i<=N; i++){
+		for(j=0; j<=N; j++){
+			for(k=0; k<=N; k++){
+				Hy2[ind(i,j,k)] = data_in[i][j][k];
+			}
+		}
+	}
+	
+	*dset_in = fin -> openDataSet("Hz2");
+	*dspace_in = dset_in -> getSpace();
+	mspace_in = new DataSpace(rank_in,dims_in);
+	dset_in -> read(data_in, PredType::NATIVE_DOUBLE, *mspace_in, *dspace_in);
+	for(i=0; i<=N; i++){
+		for(j=0; j<=N; j++){
+			for(k=0; k<=N; k++){
+				Hz2[ind(i,j,k)] = data_in[i][j][k];
+			}
+		}
+	}
+	
+	for(i=0; i<=N; i++){
+		for(j=0; j<=N; j++){
+			for(k=0; k<=N; k++){
+				Ex1[ind(i,j,k)] = Ex[ind(i,j,k)];
+				Ey1[ind(i,j,k)] = Ey[ind(i,j,k)];
+				Ez1[ind(i,j,k)] = Ez[ind(i,j,k)];
+				Hx1[ind(i,j,k)] = Hx[ind(i,j,k)];
+				Hy1[ind(i,j,k)] = Hy[ind(i,j,k)];
+				Hz1[ind(i,j,k)] = Hz[ind(i,j,k)];
 			}
 		}
 	}
@@ -404,7 +470,7 @@ void EdgeCondE(){ //This only works for cubic grid
 	for(int i=0; i<=N-1; i++){
 		b = atan(1.*N/(sqrt(2)*abs(0.5*N-i)));
 		d = sqrt(0.5*N*N + (0.5*N-i)*(0.5*N-i));
-		f = sqrt((d-1.)/d);
+		f = (d-1.)/d;
 		Ex[ind(i,0,0)] = Edge(i, a, b, f, Ex2, 1, 0, 0);
 		Ey[ind(i,0,0)] = Edge(i, a, b, f, Ey2, 1, 0, 0);
 		Ez[ind(i,0,0)] = Edge(i, a, b, f, Ez2, 1, 0, 0);
@@ -453,7 +519,7 @@ void EdgeCondH(){
 	for(int i=0; i<=N-1; i++){
 		b = atan(1.*N/(sqrt(2)*abs(0.5*N-i)));
 		d = sqrt(0.5*N*N + (0.5*N-i)*(0.5*N-i));
-		f = sqrt((d-1.)/d);
+		f = (d-1.)/d;
 		Hx[ind(i,0,0)] = Edge(i, a, b, f, Hx2, 1, 0, 0);
 		Hy[ind(i,0,0)] = Edge(i, a, b, f, Hy2, 1, 0, 0);
 		Hz[ind(i,0,0)] = Edge(i, a, b, f, Hz2, 1, 0, 0);
