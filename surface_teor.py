@@ -35,7 +35,7 @@ surf1 = mlab.pipeline.iso_surface(P_, contours=[P.max()-0.2*P.ptp()], opacity=0.
 text = mlab.text(0.1,0.8,'t = '+"%.3f"%(-1.5-0.5*Dt + 0*Dt)+' s',width=0.4)
 mlab.savefig('isosurface/P02_teor'+'%.3i'%0+'.png')
 
-for i in np.arange(111,iterations,1):
+for i in np.arange(23,iterations,1): #up to 35
 	print i
 	
 	Ex = ( Fx( I+0.5*D , J+0.5*D , K+0.5*D , -1.5-0.5*Dt+i*Dt ) ).real
