@@ -7,7 +7,7 @@ def ind(i,j,k):
 	global N
 	return (N+1)*(N+1)*i+(N+1)*j+k
 
-fin = h5.File('simulation_results.h5','r')
+fin = h5.File('results_23.h5','r')
 N = fin.attrs['N'][0]
 iterations = fin.attrs['iterations'][0]
 Dt = fin.attrs['Dt'][0]

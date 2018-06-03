@@ -6,3 +6,4 @@ FDTD
 *.pdf
 *.mp4
 /.metadata/
+*.pyc

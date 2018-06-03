@@ -11,7 +11,7 @@ field = sys.argv[1]
 plane = sys.argv[2]
 
 #Open data file
-fin = h5.File('simulation_results.h5','r')
+fin = h5.File('results_23.h5','r')
 
 N = fin.attrs['N'][0]
 iterations = fin.attrs['iterations'][0]

@@ -33,15 +33,15 @@ plot:
 	python plotcm.py Ez_sim YZ
 
 ploterror:
-	python ploterror.py P XY
-	python ploterror.py P XZ
-	python ploterror.py P YZ
-	python ploterror.py Ex XY
-	python ploterror.py Ex XZ
-	python ploterror.py Ex YZ
-	python ploterror.py Ey XY
-	python ploterror.py Ey XZ
-	python ploterror.py Ey YZ
+	#python ploterror.py P XY
+	#python ploterror.py P XZ
+	#python ploterror.py P YZ
+	#python ploterror.py Ex XY
+	#python ploterror.py Ex XZ
+	#python ploterror.py Ex YZ
+	#python ploterror.py Ey XY
+	#python ploterror.py Ey XZ
+	#python ploterror.py Ey YZ
 	python ploterror.py Ez XY
 	python ploterror.py Ez XZ
 	python ploterror.py Ez YZ

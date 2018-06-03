@@ -14,7 +14,7 @@ def ind(i,j,k):
 	global N
 	return (N+1)*(N+1)*i + (N+1)*j + k
 
-fin = h5.File('simulation_results.h5','r')
+fin = h5.File('results_23.h5','r')
 
 N = fin.attrs['N'][0]
 iterations = fin.attrs['iterations'][0]
@@ -69,7 +69,7 @@ def init():
                 F = abs((P-P_teor)/max_val)
         
         elif field == 'Ex':
-		Ex = fin['0']['Ex'][:]
+		E = fin['0']['Ex'][:]
                 if plane=='XY':
 			E = E[ind(I_z,J_z,N/2)]
 			E_teor = ( Fx( I_ , J_+0.5*D ,  0+0.5*D , -1.5-0.5*Dt+0*Dt ) ).real
@@ -84,7 +84,7 @@ def init():
                 F = abs((E-E_teor)/max_val)
         
         elif field == 'Ey':
-		Ex = fin['0']['Ey'][:]
+		E = fin['0']['Ey'][:]
                 if plane=='XY':
 			E = E[ind(I_z,J_z,N/2)]
 			E_teor = ( Fy( I_+0.5*D , J_ ,  0+0.5*D , -1.5-0.5*Dt+0*Dt ) ).real
@@ -99,7 +99,7 @@ def init():
                 F = abs((E-E_teor)/max_val)
         
         elif field == 'Ez':
-		Ex = fin['0']['Ez'][:]
+		E = fin['0']['Ez'][:]
                 if plane=='XY':
 			E = E[ind(I_z,J_z,N/2)]
 			E_teor = ( Fz( I_+0.5*D , J_+0.5*D ,  0 , -1.5-0.5*Dt+0*Dt ) ).real
@@ -154,7 +154,7 @@ def iteration(n):
                 F = abs((P-P_teor)/max_val)
         
         elif field == 'Ex':
-		Ex = fin[str(n)]['Ex'][:]
+		E = fin[str(n)]['Ex'][:]
                 if plane=='XY':
 			E = E[ind(I_z,J_z,N/2)]
 			E_teor = ( Fx( I_ , J_+0.5*D ,  0+0.5*D , -1.5-0.5*Dt+n*Dt ) ).real
@@ -169,7 +169,7 @@ def iteration(n):
                 F = abs((E-E_teor)/max_val)
         
         elif field == 'Ey':
-		Ex = fin[str(n)]['Ey'][:]
+		E = fin[str(n)]['Ey'][:]
                 if plane=='XY':
 			E = E[ind(I_z,J_z,N/2)]
 			E_teor = ( Fy( I_+0.5*D , J_ ,  0+0.5*D , -1.5-0.5*Dt+n*Dt ) ).real
@@ -184,7 +184,7 @@ def iteration(n):
                 F = abs((E-E_teor)/max_val)
         
         elif field == 'Ez':
-		Ex = fin[str(n)]['Ez'][:]
+		E = fin[str(n)]['Ez'][:]
                 if plane=='XY':
 			E = E[ind(I_z,J_z,N/2)]
 			E_teor = ( Fz( I_+0.5*D , J_+0.5*D ,  0 , -1.5-0.5*Dt+n*Dt ) ).real
@@ -196,6 +196,7 @@ def iteration(n):
 			E_teor = ( Fz(  0+0.5*D , I_+0.5*D , J_ , -1.5-0.5*Dt+n*Dt ) ).real
                 
                 max_val = E_teor.max()
+                F = abs((E-E_teor)/max_val)
 	
 	plt.cla()
 	pylab.pcolor(F)

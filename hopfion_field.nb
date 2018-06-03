@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     15120,        359]
-NotebookOptionsPosition[     14112,        327]
-NotebookOutlinePosition[     14446,        342]
-CellTagsIndexPosition[     14403,        339]
+NotebookDataLength[      9010,        229]
+NotebookOptionsPosition[      8415,        209]
+NotebookOutlinePosition[      8749,        224]
+CellTagsIndexPosition[      8706,        221]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -22,9 +22,9 @@ Cell[BoxData[
  RowBox[{"\[IndentingNewLine]", 
   RowBox[{
    RowBox[{
-    RowBox[{"p", "=", "2"}], ";"}], "\[IndentingNewLine]", 
+    RowBox[{"p", "=", "1"}], ";"}], "\[IndentingNewLine]", 
    RowBox[{
-    RowBox[{"q", "=", "5"}], ";"}], "\[IndentingNewLine]", 
+    RowBox[{"q", "=", "1"}], ";"}], "\[IndentingNewLine]", 
    "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{
@@ -63,8 +63,8 @@ Cell[BoxData[
          RowBox[{"z", "^", "2"}], "-", 
          RowBox[{
           RowBox[{"(", 
-           RowBox[{"t", "-", "I"}], ")"}], "^", "2"}]}], ")"}]}]}]}], ";"}], 
-   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+           RowBox[{"t", "-", "I"}], ")"}], "^", "2"}]}], ")"}]}]}]}], ";", 
+    "1"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"Da", "=", 
      RowBox[{"{", 
@@ -176,11 +176,9 @@ Cell[BoxData[
    3.732976003762795*^9}, {3.7329761569566193`*^9, 3.732976160213419*^9}, 
    3.7329762992755547`*^9, {3.733030745904766*^9, 3.733030751033482*^9}, {
    3.733030803845813*^9, 3.733030810321597*^9}, 3.7355671316922894`*^9, {
-   3.73556770789606*^9, 
-   3.7355677152143*^9}},ExpressionUUID->"7d7a0201-523e-4993-bb11-\
+   3.73556770789606*^9, 3.7355677152143*^9}, {3.736957039947877*^9, 
+   3.736957051511649*^9}},ExpressionUUID->"7d7a0201-523e-4993-bb11-\
 de619db65934"],
-
-Cell[CellGroupData[{
 
 Cell[BoxData[
  RowBox[{
@@ -191,44 +189,6 @@ Cell[BoxData[
   3.733030783781455*^9}},ExpressionUUID->"ca5497c8-c834-4700-8e7c-\
 934c9e298188"],
 
-Cell["\<\
-(160*(x - I*y)^4*(-1 - t^2 + x^2 + y^2 + (2*I)*z + z^2)*(-4/(1 + (2*I)*t - \
-t^2 + x^2 + y^2 + z^2)^4 - ((16*I)*t)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 \
-+ 
-   (24*t^2)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + ((16*I)*t^3)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   (4*t^4)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - (8*x^2)/(1 + (2*I)*t - \
-t^2 + x^2 + y^2 + z^2)^4 - 
-   ((16*I)*t*x^2)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + (8*t^2*x^2)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   (4*x^4)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + ((8*I)*x*y)/(1 + (2*I)*t \
-- t^2 + x^2 + y^2 + z^2)^4 - 
-   (16*t*x*y)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - ((8*I)*t^2*x*y)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   ((8*I)*x^3*y)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + ((8*I)*x*y^3)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   (4*y^4)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + ((8*I)*z)/(1 + (2*I)*t - \
-t^2 + x^2 + y^2 + z^2)^4 - 
-   (24*t*z)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - ((24*I)*t^2*z)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   (8*t^3*z)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + ((8*I)*x^2*z)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   (8*t*x^2*z)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + ((8*I)*y^2*z)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   (8*t*y^2*z)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + ((8*I)*x*y*z^2)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   (8*y^2*z^2)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + ((8*I)*z^3)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   (8*t*z^3)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + (4*z^4)/(1 + (2*I)*t - \
-t^2 + x^2 + y^2 + z^2)^4))/(-(-I + t)^2 + x^2 + y^2 + z^2)^5\
-\>", "Output",
- CellChangeTimes->{
-  3.7355672006050167`*^9},ExpressionUUID->"b075454f-f3a0-440c-a0df-\
-0ae772efc535"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
 Cell[BoxData[
  RowBox[{
   RowBox[{"F2", "[", 
@@ -238,43 +198,6 @@ Cell[BoxData[
   3.733030801599845*^9}},ExpressionUUID->"2b5c67bd-39ac-4979-91cc-\
 4d0a0c9d883a"],
 
-Cell["\<\
-(160*(x - I*y)^4*(-1 - t^2 + x^2 + y^2 + (2*I)*z + z^2)*((4*I)/(1 + (2*I)*t - \
-t^2 + x^2 + y^2 + z^2)^4 - (16*t)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   ((24*I)*t^2)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + (16*t^3)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   ((4*I)*t^4)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - ((4*I)*x^4)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   (8*x*y)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - ((16*I)*t*x*y)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   (8*t^2*x*y)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - (8*x^3*y)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   ((8*I)*y^2)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - (16*t*y^2)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   ((8*I)*t^2*y^2)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - (8*x*y^3)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   ((4*I)*y^4)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + (8*z)/(1 + (2*I)*t - \
-t^2 + x^2 + y^2 + z^2)^4 + 
-   ((24*I)*t*z)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - (24*t^2*z)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   ((8*I)*t^3*z)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + (8*x^2*z)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   ((8*I)*t*x^2*z)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + (8*y^2*z)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   ((8*I)*t*y^2*z)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - \
-((8*I)*x^2*z^2)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   (8*x*y*z^2)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + (8*z^3)/(1 + (2*I)*t \
-- t^2 + x^2 + y^2 + z^2)^4 + 
-   ((8*I)*t*z^3)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - ((4*I)*z^4)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4))/(-(-I + t)^2 + x^2 + y^2 + z^2)^5\
-\>", "Output",
- CellChangeTimes->{
-  3.735567203658021*^9},ExpressionUUID->"c5d27399-eab5-476e-8513-\
-b1de8adc4259"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
 Cell[BoxData[
  RowBox[{
   RowBox[{"F3", "[", 
@@ -282,48 +205,7 @@ Cell[BoxData[
   "InputForm"}]], "Input",
  CellChangeTimes->{
   3.7330308003650713`*^9},ExpressionUUID->"8ae4bf8e-dfa7-467c-8121-\
-67e7ae41e0b5"],
-
-Cell["\<\
-(160*(x - I*y)^4*(-1 - t^2 + x^2 + y^2 + (2*I)*z + z^2)*(((-8*I)*x)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   (24*t*x)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + ((24*I)*t^2*x)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   (8*t^3*x)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - ((8*I)*x^3)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   (8*t*x^3)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - (8*y)/(1 + (2*I)*t - \
-t^2 + x^2 + y^2 + z^2)^4 - 
-   ((24*I)*t*y)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + (24*t^2*y)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   ((8*I)*t^3*y)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - (8*x^2*y)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   ((8*I)*t*x^2*y)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - ((8*I)*x*y^2)/(1 \
-+ (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   (8*t*x*y^2)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - (8*y^3)/(1 + (2*I)*t \
-- t^2 + x^2 + y^2 + z^2)^4 - 
-   ((8*I)*t*y^3)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - (8*x*z)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   ((16*I)*t*x*z)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + (8*t^2*x*z)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   (8*x^3*z)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + ((8*I)*y*z)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   (16*t*y*z)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - ((8*I)*t^2*y*z)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   ((8*I)*x^2*y*z)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - (8*x*y^2*z)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   ((8*I)*y^3*z)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - ((8*I)*x*z^2)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   (8*t*x*z^2)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - (8*y*z^2)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - 
-   ((8*I)*t*y*z^2)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4 - (8*x*z^3)/(1 + \
-(2*I)*t - t^2 + x^2 + y^2 + z^2)^4 + 
-   ((8*I)*y*z^3)/(1 + (2*I)*t - t^2 + x^2 + y^2 + z^2)^4))/(-(-I + t)^2 + x^2 \
-+ y^2 + z^2)^5\
-\>", "Output",
- CellChangeTimes->{
-  3.735567206857402*^9},ExpressionUUID->"87dcd86f-a242-4b0b-a9c5-\
-ea053588effd"]
-}, Open  ]]
+67e7ae41e0b5"]
 },
 WindowSize->{1366, 719},
 WindowMargins->{{0, Automatic}, {0, Automatic}},
@@ -341,26 +223,14 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 7019, 160, 351, "Input", "ExpressionUUID" -> \
+Cell[558, 20, 7071, 160, 351, "Input", "ExpressionUUID" -> \
 "7d7a0201-523e-4993-bb11-de619db65934"],
-Cell[CellGroupData[{
-Cell[7602, 184, 265, 7, 34, "Input", "ExpressionUUID" -> \
+Cell[7632, 182, 265, 7, 34, "Input", "ExpressionUUID" -> \
 "ca5497c8-c834-4700-8e7c-934c9e298188"],
-Cell[7870, 193, 1794, 33, 280, "Output", "ExpressionUUID" -> \
-"b075454f-f3a0-440c-a0df-0ae772efc535"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[9701, 231, 265, 7, 34, "Input", "ExpressionUUID" -> \
+Cell[7900, 191, 265, 7, 34, "Input", "ExpressionUUID" -> \
 "2b5c67bd-39ac-4979-91cc-4d0a0c9d883a"],
-Cell[9969, 240, 1797, 32, 280, "Output", "ExpressionUUID" -> \
-"c5d27399-eab5-476e-8513-b1de8adc4259"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[11803, 277, 243, 7, 34, "Input", "ExpressionUUID" -> \
-"8ae4bf8e-dfa7-467c-8121-67e7ae41e0b5"],
-Cell[12049, 286, 2047, 38, 334, "Output", "ExpressionUUID" -> \
-"87dcd86f-a242-4b0b-a9c5-ea053588effd"]
-}, Open  ]]
+Cell[8168, 200, 243, 7, 34, "Input", "ExpressionUUID" -> \
+"8ae4bf8e-dfa7-467c-8121-67e7ae41e0b5"]
 }
 ]
 *)

@@ -53,7 +53,7 @@ int main(){
 	C3 = c*c*Dt*Dt/(2*Dx*(c*Dt+Dx));
 	
 	/* Initial conditions */ //THERE IS SOME MISTAKE HERE, DOESN'T READ DATA CORRECTLY (SEE "prueba.cpp")
-	H5File* fin = new H5File("hopfion_init.h5", H5F_ACC_RDONLY);
+	H5File* fin = new H5File("init_11.h5", H5F_ACC_RDONLY);
 	DataSet* dset_in = new DataSet;
 	*dset_in = fin -> openDataSet("Ex");
 	H5T_class_t type_in = dset_in -> getTypeClass();
@@ -223,7 +223,7 @@ int main(){
 	Exception::dontPrint();
 	
 	/* Prepare output file */
-	H5File fout("simulation_results.h5", H5F_ACC_TRUNC);
+	H5File fout("results_11.h5", H5F_ACC_TRUNC);
 	hsize_t dimsf[1];
 	dimsf[0] = (N+1)*(N+1)*(N+1);
 	DataSpace dspace(1, dimsf);
@@ -249,7 +249,7 @@ int main(){
 	attr = fout.createAttribute("Dt",PredType::NATIVE_DOUBLE, attrds);
 	double attr_Dt[1] = {Dt};
 	attr.write(PredType::NATIVE_DOUBLE, attr_Dt);
-	
+        
 	for(n=0; n<=iterations; n++){
 		
 		/* Data -> h5 */
