@@ -108,6 +108,7 @@ elif ARG == 'P':
 	Pz_ = Ex*Hy-Ey*Hx
 	del Ex, Ey, Ez
 	
+	max_val = (np.sqrt(Px_*Px_+Py_*Py_+Pz_*Pz_)).max()
 	E = np.sqrt( (Px - Px_)**2 + (Py - Py_)**2 + (Pz - Pz_)**2 )
 	del Px, Py, Pz, Px_, Py_, Pz_
 	

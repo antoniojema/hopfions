@@ -45,3 +45,81 @@ ploterror:
 	python ploterror.py Ez XY
 	python ploterror.py Ez XZ
 	python ploterror.py Ez YZ
+
+fieldlines:
+	python field_lines.py E sim 1
+	python field_lines.py E sim 1 above
+	python field_lines.py E sim 60
+	python field_lines.py E sim 60 above
+	python field_lines.py E sim 120
+	python field_lines.py E sim 120 above
+	python field_lines.py H sim 1
+	python field_lines.py H sim 1 above
+	python field_lines.py H sim 60
+	python field_lines.py H sim 60 above
+	python field_lines.py H sim 120
+	python field_lines.py H sim 120 above
+	python field_lines.py P sim 1
+	python field_lines.py P sim 1 above
+	python field_lines.py P sim 60
+	python field_lines.py P sim 60 above
+	python field_lines.py P sim 120
+	python field_lines.py P sim 120 above
+	python field_lines.py EHP sim 1
+	python field_lines.py EHP sim 1 above
+	python field_lines.py EHP sim 60
+	python field_lines.py EHP sim 60 above
+	python field_lines.py EHP sim 120
+	python field_lines.py EHP sim 120 above
+	python field_lines.py E teor 1
+	python field_lines.py E teor 1 above
+	python field_lines.py E teor 60
+	python field_lines.py E teor 60 above
+	python field_lines.py E teor 120
+	python field_lines.py E teor 120 above
+	python field_lines.py H teor 1
+	python field_lines.py H teor 1 above
+	python field_lines.py H teor 60
+	python field_lines.py H teor 60 above
+	python field_lines.py H teor 120
+	python field_lines.py H teor 120 above
+	python field_lines.py P teor 1
+	python field_lines.py P teor 1 above
+	python field_lines.py P teor 60
+	python field_lines.py P teor 60 above
+	python field_lines.py P teor 120
+	python field_lines.py P teor 120 above
+	python field_lines.py EHP teor 1
+	python field_lines.py EHP teor 1 above
+	python field_lines.py EHP teor 60
+	python field_lines.py EHP teor 60 above
+	python field_lines.py EHP teor 120
+	python field_lines.py EHP teor 120 above
+
+above:
+	python above.py E sim 1
+	python above.py E sim 60
+	python above.py E sim 120
+	python above.py H sim 1
+	python above.py H sim 60
+	python above.py H sim 120
+	python above.py P sim 1
+	python above.py P sim 60
+	python above.py P sim 120
+	python above.py EHP sim 1
+	python above.py EHP sim 60
+	python above.py EHP sim 120
+	python above.py E teor 1
+	python above.py E teor 60
+	python above.py E teor 120
+	python above.py H teor 1
+	python above.py H teor 60
+	python above.py H teor 120
+	python above.py P teor 1
+	python above.py P teor 60
+	python above.py P teor 120
+	python above.py EHP teor 1
+	python above.py EHP teor 60
+	python above.py EHP teor 120
+shut:
+	shutdown now
