@@ -19,6 +19,8 @@ Dt = fin.attrs['Dt'][0]
 I = np.array([[[i for k in range(N)] for j in range(N)] for i in range(N)])+1
 J = np.array([[[j for k in range(N)] for j in range(N)] for i in range(N)])+1
 K = np.array([[[k for k in range(N)] for j in range(N)] for i in range(N)])+1
+I_= np.array([[i for j in range(N)] for i in range(N)])
+J_= np.array([[j for j in range(N)] for i in range(N)])
 
 if ARG == 'E':
 	Ex = fin[str(n)]['Ex'][:]
@@ -42,6 +44,8 @@ if ARG == 'E':
 	mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 	mlab.text(0.65,0.9,'t = '+'%.4f'%(-1.5-0.5*Dt + n*Dt)+' s',width=0.3)
 	mlab.text(0.5,0.8,'Max. teor. = '+'%.2f'%max_val,width=0.45)
+	
+	mlab.show()
 
 
 elif ARG == 'H':
@@ -66,6 +70,8 @@ elif ARG == 'H':
 	mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 	mlab.text(0.65,0.9,'t = '+'%.4f'%(-1.5-0.5*Dt + n*Dt)+' s',width=0.3)
 	mlab.text(0.5,0.8,'Max. teor. = '+'%.2f'%max_val,width=0.45)
+	
+	mlab.show()
 
 
 elif ARG == 'P':
@@ -117,5 +123,8 @@ elif ARG == 'P':
 	mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 	mlab.text(0.65,0.9,'t = '+'%.4f'%(-1.5-0.5*Dt + n*Dt)+' s',width=0.3)
 	mlab.text(0.5,0.8,'Max. teor. = '+'%.2f'%max_val,width=0.45)
+	mlab.show()
 
-mlab.show()
+
+elif ARG == 'E_2D':
+	

@@ -4,7 +4,6 @@ from mayavi import mlab
 from F11 import *
 import sys
 
-SEEDS = 8
 n=int(sys.argv[3])
 ARG1 = sys.argv[1]
 ARG2 = sys.argv[2]
@@ -45,11 +44,10 @@ if ARG2 == 'sim':
 		Ez = 0.5  *( Ez[ind(I-1,J-1,K-1)] + Ez[ind(I-1,J-1, K )] )
 		
 		field = mlab.pipeline.extract_vector_norm(mlab.pipeline.vector_field(Ex,Ey,Ez)); del Ex, Ey, Ez;
-		mlab.text(0.05,0.9,'(a)',width=0.05)
-		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt)+' s',width=0.3)
+		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt),width=0.3)
 		color = (30./255,144./255,1)
 		
-		mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		if n == 60:
@@ -61,20 +59,17 @@ if ARG2 == 'sim':
 			axe.seed.widget.enabled=False
 			
 			line = []
-			for i in range(SEEDS):
-				line += [ mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
+			for i in range(20):
+				line += [ mlab.pipeline.streamline(field, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
 				line[i].streamline_type = 'tube'
 				line[i].tube_filter.radius = 2
 				line[i].stream_tracer.maximum_propagation = 200
-				line[i].seed.widget.center = [100.5,100.5+30.5*np.cos(1.*i/SEEDS*2*np.pi),100.75+30.5*np.sin(1.*i/SEEDS*2*np.pi)]
-				line[i].seed.widget.radius = 10
-				line[i].seed.widget.theta_resolution=5
-				line[i].seed.widget.phi_resolution=5
-			
-			for i in line:
-				i.seed.widget.enabled=False
+				line[i].seed.widget.position = [100.5,100.5+40.5*np.cos(2.*np.pi*i/20),100.75+40.5*np.sin(2.*np.pi*i/20)]
+				
+				line[i].seed.widget.enabled=False
 		
-		elif n == 1:
+		elif n == 1 or n == 0:
+                        
 			axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(0,0,139./255))
 			axe.seed.widget.position=[100.5,100.5,129.75]
 			axe.streamline_type='tube'
@@ -82,16 +77,16 @@ if ARG2 == 'sim':
 			axe.stream_tracer.maximum_propagation = 200
 			axe.seed.widget.enabled=False
 			
-			line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
-			line.streamline_type = 'tube'
-			line.tube_filter.radius = 2
-			line.stream_tracer.maximum_propagation = 200
-			line.seed.widget.center = [100,100,100]
-			line.seed.widget.radius = 20
-			line.seed.widget.theta_resolution=15
-			line.seed.widget.phi_resolution=15
+			line = []
+			for i in range(30):
+				line += [ mlab.pipeline.streamline(field, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
+				line[i].streamline_type = 'tube'
+				line[i].tube_filter.radius = 2
+				line[i].stream_tracer.maximum_propagation = 200
+				line[i].seed.widget.position = [100,100+20*np.cos(2.*np.pi*i/30),100+20*np.sin(2.*np.pi*i/30)]
+				
+				line[i].seed.widget.enabled=False
 			
-			line.seed.widget.enabled=False
 		
 		elif n == 120:
 			axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(0,0,139./255))
@@ -101,16 +96,15 @@ if ARG2 == 'sim':
 			axe.stream_tracer.maximum_propagation = 200
 			axe.seed.widget.enabled=False
 			
-			line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
-			line.streamline_type = 'tube'
-			line.tube_filter.radius = 2
-			line.stream_tracer.maximum_propagation = 200
-			line.seed.widget.center = [100,100,100]
-			line.seed.widget.radius = 20
-			line.seed.widget.theta_resolution=15
-			line.seed.widget.phi_resolution=15
-			
-			line.seed.widget.enabled=False
+			line = []
+			for i in range(30):
+				line += [ mlab.pipeline.streamline(field, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
+				line[i].streamline_type = 'tube'
+				line[i].tube_filter.radius = 2
+				line[i].stream_tracer.maximum_propagation = 200
+				line[i].seed.widget.position = [100,100+20*np.cos(2.*np.pi*i/30),100+20*np.sin(2.*np.pi*i/30)]
+				
+				line[i].seed.widget.enabled=False
 	
 	
 	elif ARG1 == 'H':
@@ -123,11 +117,10 @@ if ARG2 == 'sim':
 		Hz = 0.5  *( Hz[ind(I,J,K)] + Hz[ind( I , J ,K-1)] )
 		
 		field = mlab.pipeline.extract_vector_norm(mlab.pipeline.vector_field(Hx,Hy,Hz)); del Hx, Hy, Hz;
-		mlab.text(0.05,0.9,'(b)',width=0.05)
-		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5 + n*Dt)+' s',width=0.3)
+		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5 + n*Dt),width=0.3)
 		color = (1,165./255,0)
 		
-		mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		if n == 60:
@@ -139,20 +132,16 @@ if ARG2 == 'sim':
 			axe.seed.widget.enabled=False
 			
 			line = []
-			for i in range(SEEDS):
-				line += [ mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
+			for i in range(20):
+				line += [ mlab.pipeline.streamline(field, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
 				line[i].streamline_type = 'tube'
 				line[i].tube_filter.radius = 2
 				line[i].stream_tracer.maximum_propagation = 200
-				line[i].seed.widget.center = [100+30.5*np.cos(1.*i/SEEDS*2*np.pi),100,100+30.5*np.sin(1.*i/SEEDS*2*np.pi)]
-				line[i].seed.widget.radius = 10
-				line[i].seed.widget.theta_resolution=5
-				line[i].seed.widget.phi_resolution=5
-			
-			for i in line:
-				i.seed.widget.enabled=False
+				line[i].seed.widget.position = [100+40.5*np.cos(2.*np.pi*i/20),100,100+40.5*np.sin(2.*np.pi*i/20)]
+				
+				line[i].seed.widget.enabled=False
 		
-		elif n == 1:
+		elif n == 1 or n == 0:
 			axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(1,69./255,0))
 			axe.seed.widget.position=[100,100,129.75]
 			axe.streamline_type='tube'
@@ -160,16 +149,15 @@ if ARG2 == 'sim':
 			axe.stream_tracer.maximum_propagation = 200
 			axe.seed.widget.enabled=False
 			
-			line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
-			line.streamline_type = 'tube'
-			line.tube_filter.radius = 2
-			line.stream_tracer.maximum_propagation = 200
-			line.seed.widget.center = [100,100,100]
-			line.seed.widget.radius = 20
-			line.seed.widget.theta_resolution=15
-			line.seed.widget.phi_resolution=15
-			
-			line.seed.widget.enabled=False
+			line = []
+			for i in range(30):
+				line += [ mlab.pipeline.streamline(field, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
+				line[i].streamline_type = 'tube'
+				line[i].tube_filter.radius = 2
+				line[i].stream_tracer.maximum_propagation = 200
+				line[i].seed.widget.position = [100+20*np.cos(2.*np.pi*i/30),100,100+20*np.sin(2.*np.pi*i/30)]
+				
+				line[i].seed.widget.enabled=False
 		
 		elif n == 120:
 			axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(1,69./255,0))
@@ -179,16 +167,15 @@ if ARG2 == 'sim':
 			axe.stream_tracer.maximum_propagation = 200
 			axe.seed.widget.enabled=False
 			
-			line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
-			line.streamline_type = 'tube'
-			line.tube_filter.radius = 2
-			line.stream_tracer.maximum_propagation = 200
-			line.seed.widget.center = [100,100,100]
-			line.seed.widget.radius = 20
-			line.seed.widget.theta_resolution=15
-			line.seed.widget.phi_resolution=15
-			
-			line.seed.widget.enabled=False
+			line = []
+			for i in range(30):
+				line += [ mlab.pipeline.streamline(field, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
+				line[i].streamline_type = 'tube'
+				line[i].tube_filter.radius = 2
+				line[i].stream_tracer.maximum_propagation = 200
+				line[i].seed.widget.position = [100+20*np.cos(2.*np.pi*i/30),100,100+20*np.sin(2.*np.pi*i/30)]
+				
+				line[i].seed.widget.enabled=False
 	
 	
 	elif ARG1 == 'P':
@@ -221,70 +208,31 @@ if ARG2 == 'sim':
 		P = np.sqrt(Px*Px+Py*Py+Pz*Pz)
 		module = mlab.pipeline.scalar_field(P)
 		field = mlab.pipeline.extract_vector_norm(mlab.pipeline.vector_field(Px,Py,Pz)); del Px, Py, Pz;
-		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt)+' s',width=0.3)
+		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt),width=0.3)
 		color = (0,1,0)
 		
-		mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		mlab.pipeline.iso_surface(module, contours=[P.max()-0.5*P.ptp()], opacity=0.5,reset_zoom=False,color=(1,0,0))
-	
-		if n == 60:
-			axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(0,1./2.55,0))
-			axe.seed.widget.position=[100,100,100]
-			axe.streamline_type='tube'
-			axe.tube_filter.radius = 3
-			axe.stream_tracer.maximum_propagation = 200
-			axe.seed.widget.enabled=False
-			
-			line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
-			line.streamline_type = 'tube'
-			line.tube_filter.radius = 2
-			line.stream_tracer.maximum_propagation = 200
-			line.seed.widget.center = [100,100,100]
-			line.seed.widget.radius = 40
-			line.seed.widget.theta_resolution=20
-			line.seed.widget.phi_resolution=2
-			
-			line.seed.widget.enabled=False
 		
-		elif n == 1:
-			axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(0,1./2.55,0))
-			axe.seed.widget.position=[100,100,100]
-			axe.streamline_type='tube'
-			axe.tube_filter.radius = 3
-			axe.stream_tracer.maximum_propagation = 200
-			axe.seed.widget.enabled=False
-			
-			line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
-			line.streamline_type = 'tube'
-			line.tube_filter.radius = 2
-			line.stream_tracer.maximum_propagation = 200
-			line.seed.widget.center = [100,100,50]
-			line.seed.widget.radius = 40
-			line.seed.widget.theta_resolution=20
-			line.seed.widget.phi_resolution=2
-			
-			line.seed.widget.enabled=False
+		axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(0,1./2.55,0))
+		axe.seed.widget.position=[100,100,100]
+		axe.streamline_type = 'tube'
+		axe.tube_filter.radius = 3
+		axe.stream_tracer.maximum_propagation = 200
+		axe.seed.widget.enabled=False
 		
-		elif n == 120:
-			axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(0,1./2.55,0))
-			axe.seed.widget.position=[100,100,100]
-			axe.streamline_type='tube'
-			axe.tube_filter.radius = 3
-			axe.stream_tracer.maximum_propagation = 200
-			axe.seed.widget.enabled=False
-			
-			line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
-			line.streamline_type = 'tube'
-			line.tube_filter.radius = 2
-			line.stream_tracer.maximum_propagation = 200
-			line.seed.widget.center = [100,100,151]
-			line.seed.widget.radius = 40
-			line.seed.widget.theta_resolution=20
-			line.seed.widget.phi_resolution=2
-			
-			line.seed.widget.enabled=False
+		line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
+		line.streamline_type = 'tube'
+		line.tube_filter.radius = 2
+		line.stream_tracer.maximum_propagation = 100
+		line.seed.widget.center = [100,100,70.25*(n-120)/(1-120)+129.93*(n-1)/(120-1)]
+		line.seed.widget.radius = 40
+		line.seed.widget.theta_resolution=20
+		line.seed.widget.phi_resolution=2
+		
+		line.seed.widget.enabled=False
 	
 	
 	elif ARG1 == 'EHP':
@@ -316,12 +264,12 @@ if ARG2 == 'sim':
 		fieldP = mlab.pipeline.extract_vector_norm(mlab.pipeline.vector_field(Px,Py,Pz)); del Px, Py, Pz;
 		fieldE = mlab.pipeline.extract_vector_norm(mlab.pipeline.vector_field(Ex,Ey,Ez)); del Ex, Ey, Ez;
 		fieldH = mlab.pipeline.extract_vector_norm(mlab.pipeline.vector_field(Hx,Hy,Hz)); del Hx, Hy, Hz;
-		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt)+' s',width=0.3)
+		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt),width=0.3)
 		colorP = (0,1,0)
 		colorE = (30./255,144./255,1)
 		colorH = (1,165./255,0)
 		
-		mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		if n == 60:
@@ -356,26 +304,20 @@ if ARG2 == 'sim':
 			lineP.seed.widget.phi_resolution=2
 			
 			lineH = []
-			for i in range(SEEDS):
-				lineH += [ mlab.pipeline.streamline(fieldH, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorH) ]
+			for i in range(20):
+				lineH += [ mlab.pipeline.streamline(fieldH, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorH) ]
 				lineH[i].streamline_type = 'tube'
 				lineH[i].tube_filter.radius = 2
 				lineH[i].stream_tracer.maximum_propagation = 200
-				lineH[i].seed.widget.center = [100+30.5*np.cos(1.*i/SEEDS*2*np.pi),100,100+30.5*np.sin(1.*i/SEEDS*2*np.pi)]
-				lineH[i].seed.widget.radius = 10
-				lineH[i].seed.widget.theta_resolution=5
-				lineH[i].seed.widget.phi_resolution=5
+				lineH[i].seed.widget.position = [100+40.5*np.cos(2.*np.pi*i/20),100,100+40.5*np.sin(2.*np.pi*i/20)]
 			
 			lineE = []
-			for i in range(SEEDS):
-				lineE += [ mlab.pipeline.streamline(fieldE, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorE) ]
+			for i in range(20):
+				lineE += [ mlab.pipeline.streamline(fieldE, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorE) ]
 				lineE[i].streamline_type = 'tube'
 				lineE[i].tube_filter.radius = 2
 				lineE[i].stream_tracer.maximum_propagation = 200
-				lineE[i].seed.widget.center = [100,100+30.5*np.cos(1.*i/SEEDS*2*np.pi),100+30.5*np.sin(1.*i/SEEDS*2*np.pi)]
-				lineE[i].seed.widget.radius = 10
-				lineE[i].seed.widget.theta_resolution=5
-				lineE[i].seed.widget.phi_resolution=5
+				lineE[i].seed.widget.position = [100,100+40.5*np.cos(2.*np.pi*i/20),100+40.5*np.sin(2.*np.pi*i/20)]
 			
 			lineP.seed.widget.enabled=False
 			for i in lineH:
@@ -409,7 +351,7 @@ if ARG2 == 'sim':
 			lineP.streamline_type = 'tube'
 			lineP.tube_filter.radius = 2
 			lineP.stream_tracer.maximum_propagation = 200
-			lineP.seed.widget.center = [100,100,50]
+			lineP.seed.widget.center = [100,100,70.13]
 			lineP.seed.widget.radius = 40
 			lineP.seed.widget.theta_resolution=20
 			lineP.seed.widget.phi_resolution=2
@@ -462,7 +404,7 @@ if ARG2 == 'sim':
 			lineP.streamline_type = 'tube'
 			lineP.tube_filter.radius = 2
 			lineP.stream_tracer.maximum_propagation = 200
-			lineP.seed.widget.center = [100,100,151]
+			lineP.seed.widget.center = [100,100,129.93]
 			lineP.seed.widget.radius = 40
 			lineP.seed.widget.theta_resolution=20
 			lineP.seed.widget.phi_resolution=2
@@ -490,10 +432,9 @@ if ARG2 == 'sim':
 			lineE.seed.widget.enabled=False
 	
 	
-	if ARG3 == None:
-		print 'caca'
-		mlab.view(distance=700)
-		if n == 1:
+	if ARG3 ==None:
+		mlab.view(distance=500)
+		if n == 1 or n == 0:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t-15_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
 		elif n == 60:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t0_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
@@ -501,13 +442,16 @@ if ARG2 == 'sim':
 			mlab.savefig('../hopfions_memoria/media/11_flow_t15_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
 	
 	else:
-		mlab.view(azimuth=0,elevation=0,distance=600)
-		if n == 1:
+		mlab.view(azimuth=0,elevation=0,distance=450)
+		if n == 1 or n == 0:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t-15_'+ARG1+'_'+ARG2+'_above.png',size=(700,700))
 		elif n == 60:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t0_'+ARG1+'_'+ARG2+'_above.png',size=(700,700))
 		elif n == 120:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t15_'+ARG1+'_'+ARG2+'_above.png',size=(700,700))
+	
+	
+	#mlab.savefig('../hopfions_memoria/video/11_flow_'+str(n)+'_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
 	
 	#mlab.show()
 
@@ -542,12 +486,11 @@ elif ARG2 == 'teor':
 		Ez = ( Fz( I+0.5*D , J+0.5*D , K+0.5*D , -1.5-0.5*Dt+n*Dt ) ).real
 		
 		field = mlab.pipeline.extract_vector_norm(mlab.pipeline.vector_field(Ex,Ey,Ez)); del Ex, Ey, Ez;
-		mlab.text(0.05,0.9,'(a)',width=0.05)
-		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt)+' s',width=0.3)
+		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt),width=0.3)
 		isosurface=False
 		color = (30./255,144./255,1)
 		
-		mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		if n == 60:
@@ -559,20 +502,16 @@ elif ARG2 == 'teor':
 			axe.seed.widget.enabled=False
 			
 			line = []
-			for i in range(SEEDS):
-				line += [ mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
+			for i in range(20):
+				line += [ mlab.pipeline.streamline(field, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
 				line[i].streamline_type = 'tube'
 				line[i].tube_filter.radius = 2
 				line[i].stream_tracer.maximum_propagation = 200
-				line[i].seed.widget.center = [100.5,100.5+30.5*np.cos(1.*i/SEEDS*2*np.pi),100.75+30.5*np.sin(1.*i/SEEDS*2*np.pi)]
-				line[i].seed.widget.radius = 10
-				line[i].seed.widget.theta_resolution=5
-				line[i].seed.widget.phi_resolution=5
-			
-			for i in line:
-				i.seed.widget.enabled=False
+				line[i].seed.widget.position = [100.5,100.5+40.5*np.cos(2.*np.pi*i/20),100.75+40.5*np.sin(2.*np.pi*i/20)]
+				
+				line[i].seed.widget.enabled=False
 		
-		elif n == 1:
+		elif n == 1 or n == 0:
 			axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(0,0,139./255))
 			axe.seed.widget.position=[100.5,100.5,130.25]
 			axe.streamline_type='tube'
@@ -580,16 +519,15 @@ elif ARG2 == 'teor':
 			axe.stream_tracer.maximum_propagation = 200
 			axe.seed.widget.enabled=False
 			
-			line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,seed_resolution=3,color=color)
-			line.streamline_type = 'tube'
-			line.tube_filter.radius = 2
-			line.stream_tracer.maximum_propagation = 200
-			line.seed.widget.center = [100.5,100.5,100.5]
-			line.seed.widget.radius = 20
-			line.seed.widget.theta_resolution=15
-			line.seed.widget.phi_resolution=15
-			
-			line.seed.widget.enabled=False
+			line = []
+			for i in range(30):
+				line += [ mlab.pipeline.streamline(field, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
+				line[i].streamline_type = 'tube'
+				line[i].tube_filter.radius = 2
+				line[i].stream_tracer.maximum_propagation = 200
+				line[i].seed.widget.position = [100.5,100.5+20*np.cos(2.*np.pi*i/30),100.5+20*np.sin(2.*np.pi*i/30)]
+				
+				line[i].seed.widget.enabled=False
 			
 		elif n == 120:
 			axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(0,0,139./255))
@@ -599,16 +537,15 @@ elif ARG2 == 'teor':
 			axe.stream_tracer.maximum_propagation = 200
 			axe.seed.widget.enabled=False
 			
-			line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
-			line.streamline_type = 'tube'
-			line.tube_filter.radius = 2
-			line.stream_tracer.maximum_propagation = 200
-			line.seed.widget.center = [101,101,101]
-			line.seed.widget.radius = 20
-			line.seed.widget.theta_resolution=15
-			line.seed.widget.phi_resolution=15
-			
-			line.seed.widget.enabled=False
+			line = []
+			for i in range(30):
+				line += [ mlab.pipeline.streamline(field, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
+				line[i].streamline_type = 'tube'
+				line[i].tube_filter.radius = 2
+				line[i].stream_tracer.maximum_propagation = 200
+				line[i].seed.widget.position = [101,101+20*np.cos(2.*np.pi*i/30),101+20*np.sin(2.*np.pi*i/30)]
+				
+				line[i].seed.widget.enabled=False
 	
 	
 	
@@ -618,12 +555,11 @@ elif ARG2 == 'teor':
 		Hz = ( Fz( I , J , K , -1.5+n*Dt ) ).imag
 		
 		field = mlab.pipeline.extract_vector_norm(mlab.pipeline.vector_field(Hx,Hy,Hz)); del Hx, Hy, Hz;
-		mlab.text(0.05,0.9,'(b)',width=0.05)
-		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5 + n*Dt)+' s',width=0.3)
+		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5 + n*Dt),width=0.3)
 		isosurface=False
 		color = (1,165./255,0)
 		
-		mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		if n == 60:
@@ -635,20 +571,16 @@ elif ARG2 == 'teor':
 			axe.seed.widget.enabled=False
 			
 			line = []
-			for i in range(SEEDS):
-				line += [ mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
+			for i in range(20):
+				line += [ mlab.pipeline.streamline(field, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
 				line[i].streamline_type = 'tube'
 				line[i].tube_filter.radius = 2
 				line[i].stream_tracer.maximum_propagation = 200
-				line[i].seed.widget.center = [101+30.5*np.cos(1.*i/SEEDS*2*np.pi),101,101+30.5*np.sin(1.*i/SEEDS*2*np.pi)]
-				line[i].seed.widget.radius = 10
-				line[i].seed.widget.theta_resolution=5
-				line[i].seed.widget.phi_resolution=5
+				line[i].seed.widget.position = [101+40.5*np.cos(2.*np.pi*i/20),101,101+40.5*np.sin(2.*np.pi*i/20)]
 			
-			for i in line:
-				i.seed.widget.enabled=False
+				line[i].seed.widget.enabled=False
 		
-		elif n == 1:
+		elif n == 1 or n == 0:
 			axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(1,69./255,0))
 			axe.seed.widget.position=[101,101,130.75]
 			axe.streamline_type='tube'
@@ -656,16 +588,15 @@ elif ARG2 == 'teor':
 			axe.stream_tracer.maximum_propagation = 200
 			axe.seed.widget.enabled=False
 			
-			line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
-			line.streamline_type = 'tube'
-			line.tube_filter.radius = 2
-			line.stream_tracer.maximum_propagation = 200
-			line.seed.widget.center = [101,101,101]
-			line.seed.widget.radius = 20
-			line.seed.widget.theta_resolution=15
-			line.seed.widget.phi_resolution=15
-			
-			line.seed.widget.enabled=False
+			line = []
+			for i in range(30):
+				line += [ mlab.pipeline.streamline(field, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
+				line[i].streamline_type = 'tube'
+				line[i].tube_filter.radius = 2
+				line[i].stream_tracer.maximum_propagation = 200
+				line[i].seed.widget.position = [101+20*np.cos(2.*np.pi*i/30),101,101+20*np.sin(2.*np.pi*i/30)]
+				
+				line[i].seed.widget.enabled=False
 		
 		elif n == 120:
 			axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(1,69./255,0))
@@ -675,16 +606,15 @@ elif ARG2 == 'teor':
 			axe.stream_tracer.maximum_propagation = 200
 			axe.seed.widget.enabled=False
 			
-			line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
-			line.streamline_type = 'tube'
-			line.tube_filter.radius = 2
-			line.stream_tracer.maximum_propagation = 200
-			line.seed.widget.center = [101,101,101]
-			line.seed.widget.radius = 20
-			line.seed.widget.theta_resolution=15
-			line.seed.widget.phi_resolution=15
-			
-			line.seed.widget.enabled=False
+			line = []
+			for i in range(30):
+				line += [ mlab.pipeline.streamline(field, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color) ]
+				line[i].streamline_type = 'tube'
+				line[i].tube_filter.radius = 2
+				line[i].stream_tracer.maximum_propagation = 200
+				line[i].seed.widget.position = [101+20*np.cos(2.*np.pi*i/30),101,101+20*np.sin(2.*np.pi*i/30)]
+				
+				line[i].seed.widget.enabled=False
 	
 	
 	
@@ -704,70 +634,31 @@ elif ARG2 == 'teor':
 		P = np.sqrt(Px*Px+Py*Py+Pz*Pz)
 		module = mlab.pipeline.scalar_field(P)
 		field = mlab.pipeline.extract_vector_norm(mlab.pipeline.vector_field(Px,Py,Pz)); del Px, Py, Pz;
-		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt)+' s',width=0.3)
+		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt),width=0.3)
 		color = (0,1,0)
 		
-		mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		mlab.pipeline.iso_surface(module, contours=[P.max()-0.5*P.ptp()], opacity=0.5,reset_zoom=False,color=(1,0,0))
 		
-		if n == 60:
-			axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(0,1./2.55,0))
-			axe.seed.widget.position=[101,101,101]
-			axe.streamline_type='tube'
-			axe.tube_filter.radius = 3
-			axe.stream_tracer.maximum_propagation = 200
-			axe.seed.widget.enabled=False
-			
-			line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
-			line.streamline_type = 'tube'
-			line.tube_filter.radius = 2
-			line.stream_tracer.maximum_propagation = 200
-			line.seed.widget.center = [101,101,101]
-			line.seed.widget.radius = 40
-			line.seed.widget.theta_resolution=20
-			line.seed.widget.phi_resolution=2
-			
-			line.seed.widget.enabled=False
+		axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(0,1./2.55,0))
+		axe.seed.widget.position=[101,101,100]
+		axe.streamline_type = 'tube'
+		axe.tube_filter.radius = 3
+		axe.stream_tracer.maximum_propagation = 200
+		axe.seed.widget.enabled=False
 		
-		elif n == 1:
-			axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(0,1./2.55,0))
-			axe.seed.widget.position=[101,101,101]
-			axe.streamline_type='tube'
-			axe.tube_filter.radius = 3
-			axe.stream_tracer.maximum_propagation = 200
-			axe.seed.widget.enabled=False
-			
-			line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
-			line.streamline_type = 'tube'
-			line.tube_filter.radius = 2
-			line.stream_tracer.maximum_propagation = 200
-			line.seed.widget.center = [101,101,50]
-			line.seed.widget.radius = 40
-			line.seed.widget.theta_resolution=20
-			line.seed.widget.phi_resolution=2
-			
-			line.seed.widget.enabled=False
+		line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
+		line.streamline_type = 'tube'
+		line.tube_filter.radius = 2
+		line.stream_tracer.maximum_propagation = 100
+		line.seed.widget.center = [101,101,70.25*(n-120)/(1-120)+129.93*(n-1)/(120-1)]
+		line.seed.widget.radius = 40
+		line.seed.widget.theta_resolution=20
+		line.seed.widget.phi_resolution=2
 		
-		elif n == 120:
-			axe = mlab.pipeline.streamline(field,seedtype='point',seed_visible=True,integration_direction='both',color=(0,1./2.55,0))
-			axe.seed.widget.position=[101,101,101]
-			axe.streamline_type='tube'
-			axe.tube_filter.radius = 3
-			axe.stream_tracer.maximum_propagation = 200
-			axe.seed.widget.enabled=False
-			
-			line = mlab.pipeline.streamline(field, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=color)
-			line.streamline_type = 'tube'
-			line.tube_filter.radius = 2
-			line.stream_tracer.maximum_propagation = 200
-			line.seed.widget.center = [101,101,152]
-			line.seed.widget.radius = 40
-			line.seed.widget.theta_resolution=20
-			line.seed.widget.phi_resolution=2
-			
-			line.seed.widget.enabled=False
+		line.seed.widget.enabled=False
 	
 	elif ARG1 == 'EHP':
 		Ex = ( Fx( I , J , K , -1.5-0.5*Dt+n*Dt ) ).real
@@ -785,12 +676,12 @@ elif ARG2 == 'teor':
 		fieldP = mlab.pipeline.extract_vector_norm(mlab.pipeline.vector_field(Px,Py,Pz)); del Px, Py, Pz;
 		fieldE = mlab.pipeline.extract_vector_norm(mlab.pipeline.vector_field(Ex,Ey,Ez)); del Ex, Ey, Ez;
 		fieldH = mlab.pipeline.extract_vector_norm(mlab.pipeline.vector_field(Hx,Hy,Hz)); del Hx, Hy, Hz;
-		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt)+' s',width=0.3)
+		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt),width=0.3)
 		colorP = (0,1,0)
 		colorE = (30./255,144./255,1)
 		colorH = (1,165./255,0)
 		
-		mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		if n == 60:
@@ -825,26 +716,20 @@ elif ARG2 == 'teor':
 			lineP.seed.widget.phi_resolution=2
 			
 			lineH = []
-			for i in range(SEEDS):
-				lineH += [ mlab.pipeline.streamline(fieldH, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorH) ]
+			for i in range(20):
+				lineH += [ mlab.pipeline.streamline(fieldH, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorH) ]
 				lineH[i].streamline_type = 'tube'
 				lineH[i].tube_filter.radius = 2
 				lineH[i].stream_tracer.maximum_propagation = 200
-				lineH[i].seed.widget.center = [101+30.5*np.cos(1.*i/SEEDS*2*np.pi),101,101+30.5*np.sin(1.*i/SEEDS*2*np.pi)]
-				lineH[i].seed.widget.radius = 10
-				lineH[i].seed.widget.theta_resolution=5
-				lineH[i].seed.widget.phi_resolution=5
+				lineH[i].seed.widget.position = [101+40.5*np.cos(2.*np.pi*i/20),101,101+40.5*np.sin(2.*np.pi*i/20)]
 			
 			lineE = []
-			for i in range(SEEDS):
-				lineE += [ mlab.pipeline.streamline(fieldE, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorE) ]
+			for i in range(20):
+				lineE += [ mlab.pipeline.streamline(fieldE, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorE) ]
 				lineE[i].streamline_type = 'tube'
 				lineE[i].tube_filter.radius = 2
 				lineE[i].stream_tracer.maximum_propagation = 200
-				lineE[i].seed.widget.center = [101,101+30.5*np.cos(1.*i/SEEDS*2*np.pi),101+30.5*np.sin(1.*i/SEEDS*2*np.pi)]
-				lineE[i].seed.widget.radius = 10
-				lineE[i].seed.widget.theta_resolution=5
-				lineE[i].seed.widget.phi_resolution=5
+				lineE[i].seed.widget.position = [101,101+40.5*np.cos(2.*np.pi*i/20),101+40.5*np.sin(2.*np.pi*i/20)]
 			
 			lineP.seed.widget.enabled=False
 			for i in lineH:
@@ -878,32 +763,31 @@ elif ARG2 == 'teor':
 			lineP.streamline_type = 'tube'
 			lineP.tube_filter.radius = 2
 			lineP.stream_tracer.maximum_propagation = 200
-			lineP.seed.widget.center = [101,101,50]
+			lineP.seed.widget.center = [101,101,70.25]
 			lineP.seed.widget.radius = 40
 			lineP.seed.widget.theta_resolution=20
 			lineP.seed.widget.phi_resolution=2
-			
-			lineH = mlab.pipeline.streamline(fieldH, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorH)
-			lineH.streamline_type = 'tube'
-			lineH.tube_filter.radius = 2
-			lineH.stream_tracer.maximum_propagation = 200
-			lineH.seed.widget.center = [101,101,101]
-			lineH.seed.widget.radius = 20
-			lineH.seed.widget.theta_resolution=15
-			lineH.seed.widget.phi_resolution=15
-			
-			lineE = mlab.pipeline.streamline(fieldE, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorE)
-			lineE.streamline_type = 'tube'
-			lineE.tube_filter.radius = 2
-			lineE.stream_tracer.maximum_propagation = 200
-			lineE.seed.widget.center = [101,101,101]
-			lineE.seed.widget.radius = 20
-			lineE.seed.widget.theta_resolution=15
-			lineE.seed.widget.phi_resolution=15
-			
 			lineP.seed.widget.enabled=False
-			lineH.seed.widget.enabled=False
-			lineE.seed.widget.enabled=False
+			
+			lineH = []
+			for i in range(30):
+				lineH += [ mlab.pipeline.streamline(fieldH, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorH) ]
+				lineH[i].streamline_type = 'tube'
+				lineH[i].tube_filter.radius = 2
+				lineH[i].stream_tracer.maximum_propagation = 200
+				lineH[i].seed.widget.position = [101+20*np.cos(2.*np.pi*i/30),101,101+20*np.sin(2.*np.pi*i/30)]
+				
+				lineH[i].seed.widget.enabled=False
+			
+			lineE = []
+			for i in range(30):
+				lineE += [ mlab.pipeline.streamline(fieldE, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorE) ]
+				lineE[i].streamline_type = 'tube'
+				lineE[i].tube_filter.radius = 2
+				lineE[i].stream_tracer.maximum_propagation = 200
+				lineE[i].seed.widget.position = [101,101+20*np.cos(2.*np.pi*i/30),101+20*np.sin(2.*np.pi*i/30)]
+				
+				lineE[i].seed.widget.enabled=False
 		
 		elif n == 120:
 			axeP = mlab.pipeline.streamline(fieldP,seedtype='point',seed_visible=True,integration_direction='both',color=(0,1./2.55,0))
@@ -931,37 +815,38 @@ elif ARG2 == 'teor':
 			lineP.streamline_type = 'tube'
 			lineP.tube_filter.radius = 2
 			lineP.stream_tracer.maximum_propagation = 200
-			lineP.seed.widget.center = [101,101,152]
+			lineP.seed.widget.center = [101,101,129.93]
 			lineP.seed.widget.radius = 40
 			lineP.seed.widget.theta_resolution=20
 			lineP.seed.widget.phi_resolution=2
-			
-			lineH = mlab.pipeline.streamline(fieldH, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorH)
-			lineH.streamline_type = 'tube'
-			lineH.tube_filter.radius = 2
-			lineH.stream_tracer.maximum_propagation = 200
-			lineH.seed.widget.center = [101,101,101]
-			lineH.seed.widget.radius = 20
-			lineH.seed.widget.theta_resolution=15
-			lineH.seed.widget.phi_resolution=15
-			
-			lineE = mlab.pipeline.streamline(fieldE, seedtype='sphere',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorE)
-			lineE.streamline_type = 'tube'
-			lineE.tube_filter.radius = 2
-			lineE.stream_tracer.maximum_propagation = 200
-			lineE.seed.widget.center = [101,101,101]
-			lineE.seed.widget.radius = 20
-			lineE.seed.widget.theta_resolution=15
-			lineE.seed.widget.phi_resolution=15
-			
 			lineP.seed.widget.enabled=False
-			lineH.seed.widget.enabled=False
-			lineE.seed.widget.enabled=False
+			
+			lineH = []
+			for i in range(30):
+				lineH += [ mlab.pipeline.streamline(fieldH, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorH) ]
+				lineH[i].streamline_type = 'tube'
+				lineH[i].tube_filter.radius = 2
+				lineH[i].stream_tracer.maximum_propagation = 200
+				lineH[i].seed.widget.position = [101+20*np.cos(2.*np.pi*i/30),101,101+20*np.sin(2.*np.pi*i/30)]
+				
+				lineH[i].seed.widget.enabled=False
+			
+			lineE = []
+			for i in range(30):
+				lineE += [ mlab.pipeline.streamline(fieldE, seedtype='point',seed_visible=True,integration_direction='both',vmin=0,vmax=1,color=colorE) ]
+				lineE[i].streamline_type = 'tube'
+				lineE[i].tube_filter.radius = 2
+				lineE[i].stream_tracer.maximum_propagation = 200
+				lineE[i].seed.widget.position = [101,101+20*np.cos(2.*np.pi*i/30),101+20*np.sin(2.*np.pi*i/30)]
+				
+				lineE[i].seed.widget.enabled=False
+	
+	
 	
 	
 	if ARG3 ==None:
-		mlab.view(distance=700)
-		if n == 1:
+		mlab.view(distance=500)
+		if n == 1 or n == 0:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t-15_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
 		elif n == 60:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t0_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
@@ -969,15 +854,19 @@ elif ARG2 == 'teor':
 			mlab.savefig('../hopfions_memoria/media/11_flow_t15_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
 	
 	else:
-		mlab.view(azimuth=0,elevation=0,distance=600)
-		if n == 1:
+		mlab.view(azimuth=0,elevation=0,distance=450)
+		if n == 1 or n == 0:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t-15_'+ARG1+'_'+ARG2+'_above.png',size=(700,700))
 		elif n == 60:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t0_'+ARG1+'_'+ARG2+'_above.png',size=(700,700))
 		elif n == 120:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t15_'+ARG1+'_'+ARG2+'_above.png',size=(700,700))
 	
-	#mlab.show()
+	
+	#mlab.savefig('../hopfions_memoria/video/11_flow_'+str(n)+'_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
+	
+	
+	#mlab.show() 
 
 else:
 	print 'ARGUMENT ERROR'

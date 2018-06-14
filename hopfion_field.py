@@ -1,7 +1,7 @@
 import numpy as np
 import time
 import h5py as h5
-from F11 import *
+from F25 import *
 
 N = 200
 D = 10./N
@@ -30,7 +30,7 @@ Hz2 = ( Fz(    I    ,    J    , K+0.5*D ,   -1.5-Dt   ) ).imag
 
 print time.time()-t0 , ' s'
 
-fout = h5.File('init_11.h5','w')
+fout = h5.File('init_25.h5','w')
 
 fout['Ex'] = Ex
 fout['Ey'] = Ey

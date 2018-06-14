@@ -6,7 +6,7 @@ import sys
 field = sys.argv[1]
 which = sys.argv[2]
 n = sys.argv[3]
-if n == '1':
+if n == '1' or n == '0':
     t = '-15'
 
 elif n == '60':
