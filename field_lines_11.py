@@ -28,7 +28,7 @@ if ARG2 == 'sim':
 	J = np.array([[[j for k in range(N)] for j in range(N)] for i in range(N)])+1
 	K = np.array([[[k for k in range(N)] for j in range(N)] for i in range(N)])+1
 	
-	if ARG3 != None:
+	if ARG3 == 'above':
 		mlab.figure(size=(700,700),fgcolor=(0,0,0),bgcolor=(1,1,1))
 	
 	else:
@@ -47,7 +47,8 @@ if ARG2 == 'sim':
 		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt),width=0.3)
 		color = (30./255,144./255,1)
 		
-		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		if ARG3 == 'video':
+			mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		if n == 60:
@@ -120,7 +121,8 @@ if ARG2 == 'sim':
 		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5 + n*Dt),width=0.3)
 		color = (1,165./255,0)
 		
-		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		if ARG3 == 'video':
+			mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		if n == 60:
@@ -211,7 +213,8 @@ if ARG2 == 'sim':
 		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt),width=0.3)
 		color = (0,1,0)
 		
-		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		if ARG3 == 'video':
+			mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		mlab.pipeline.iso_surface(module, contours=[P.max()-0.5*P.ptp()], opacity=0.5,reset_zoom=False,color=(1,0,0))
@@ -269,7 +272,8 @@ if ARG2 == 'sim':
 		colorE = (30./255,144./255,1)
 		colorH = (1,165./255,0)
 		
-		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		if ARG3 == 'video':
+			mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		if n == 60:
@@ -432,7 +436,11 @@ if ARG2 == 'sim':
 			lineE.seed.widget.enabled=False
 	
 	
-	if ARG3 ==None:
+	
+	if ARG3 == 'video':
+		mlab.savefig('../hopfions_memoria/video/11_flow_'+str(n)+'_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
+	
+	elif ARG3 == None:
 		mlab.view(distance=500)
 		if n == 1 or n == 0:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t-15_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
@@ -441,7 +449,7 @@ if ARG2 == 'sim':
 		elif n == 120:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t15_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
 	
-	else:
+	elif ARG3 == 'above':
 		mlab.view(azimuth=0,elevation=0,distance=450)
 		if n == 1 or n == 0:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t-15_'+ARG1+'_'+ARG2+'_above.png',size=(700,700))
@@ -450,8 +458,6 @@ if ARG2 == 'sim':
 		elif n == 120:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t15_'+ARG1+'_'+ARG2+'_above.png',size=(700,700))
 	
-	
-	#mlab.savefig('../hopfions_memoria/video/11_flow_'+str(n)+'_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
 	
 	#mlab.show()
 
@@ -474,7 +480,7 @@ elif ARG2 == 'teor':
 	J = D * (np.array([[[j for k in range(N+1)] for j in range(N+1)] for i in range(N+1)]) - 0.5*N)
 	K = D * (np.array([[[k for k in range(N+1)] for j in range(N+1)] for i in range(N+1)]) - 0.5*N)
 	
-	if ARG3 != None:
+	if ARG3 == 'above':
 		mlab.figure(size=(700,700),fgcolor=(0,0,0),bgcolor=(1,1,1))
 	
 	else:
@@ -490,7 +496,8 @@ elif ARG2 == 'teor':
 		isosurface=False
 		color = (30./255,144./255,1)
 		
-		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		if ARG3 == 'video':
+			mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		if n == 60:
@@ -559,7 +566,8 @@ elif ARG2 == 'teor':
 		isosurface=False
 		color = (1,165./255,0)
 		
-		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		if ARG3 == 'video':
+			mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		if n == 60:
@@ -637,7 +645,8 @@ elif ARG2 == 'teor':
 		mlab.text(0.65,0.9,'t = '+"%.4f"%(-1.5-0.5*Dt + n*Dt),width=0.3)
 		color = (0,1,0)
 		
-		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		if ARG3 == 'video':
+			mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		mlab.pipeline.iso_surface(module, contours=[P.max()-0.5*P.ptp()], opacity=0.5,reset_zoom=False,color=(1,0,0))
@@ -681,7 +690,8 @@ elif ARG2 == 'teor':
 		colorE = (30./255,144./255,1)
 		colorH = (1,165./255,0)
 		
-		#mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
+		if ARG3 == 'video':
+			mlab.outline(extent=[0,200,0,200,0,200],opacity=0.2,color=(0,0,0))
 		mlab.orientation_axes()
 		
 		if n == 60:
@@ -843,8 +853,10 @@ elif ARG2 == 'teor':
 	
 	
 	
+	if ARG3 == 'video':
+		mlab.savefig('../hopfions_memoria/video/11_flow_'+str(n)+'_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
 	
-	if ARG3 ==None:
+	elif ARG3 == None:
 		mlab.view(distance=500)
 		if n == 1 or n == 0:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t-15_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
@@ -853,7 +865,7 @@ elif ARG2 == 'teor':
 		elif n == 120:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t15_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
 	
-	else:
+	elif ARG3 == 'above':
 		mlab.view(azimuth=0,elevation=0,distance=450)
 		if n == 1 or n == 0:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t-15_'+ARG1+'_'+ARG2+'_above.png',size=(700,700))
@@ -861,9 +873,6 @@ elif ARG2 == 'teor':
 			mlab.savefig('../hopfions_memoria/media/11_flow_t0_'+ARG1+'_'+ARG2+'_above.png',size=(700,700))
 		elif n == 120:
 			mlab.savefig('../hopfions_memoria/media/11_flow_t15_'+ARG1+'_'+ARG2+'_above.png',size=(700,700))
-	
-	
-	#mlab.savefig('../hopfions_memoria/video/11_flow_'+str(n)+'_'+ARG1+'_'+ARG2+'.png',size=(1366,1366))
 	
 	
 	#mlab.show() 
